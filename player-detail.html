@@ -11,7 +11,7 @@
   <style>
     body {
       font-family: 'Press Start 2P', cursive;
-      background-color: #212529;
+      background-color: #f0f0f0;
       padding: 1.5rem;
       font-size: 12px;
     }
@@ -37,7 +37,7 @@
     }
 
     .player-info {
-      color: #92cc41;
+      color: #5a9216;
       font-size: 0.7rem;
       margin: 0.3rem 0;
     }
@@ -61,7 +61,7 @@
     h2 {
       font-size: 0.75rem;
       margin-bottom: 1rem;
-      color: #fff;
+      color: #333;
     }
 
     .stat-row {
@@ -77,24 +77,24 @@
     }
 
     .stat-label {
-      color: #ccc;
+      color: #666;
     }
 
     .stat-value {
-      color: #fff;
+      color: #212529;
       font-weight: bold;
     }
 
     .stat-value.highlight {
-      color: #f7d51d;
+      color: #d59500;
     }
 
     .stat-value.good {
-      color: #92cc41;
+      color: #5a9216;
     }
 
     .stat-value.bad {
-      color: #e76e55;
+      color: #c13c2f;
     }
 
     table {
@@ -125,12 +125,12 @@
     }
 
     .news-box {
-      background-color: #333;
+      background-color: #e8e8e8;
       padding: 0.8rem;
       border-radius: 4px;
       font-size: 0.55rem;
       line-height: 1.4;
-      color: #ccc;
+      color: #333;
     }
 
     .acquisition-badge {
@@ -174,18 +174,18 @@
     }
 
     .game-date {
-      color: #92cc41;
+      color: #5a9216;
       font-weight: bold;
       margin-bottom: 0.3rem;
     }
 
     .game-matchup {
-      color: #fff;
+      color: #212529;
       margin-bottom: 0.2rem;
     }
 
     .game-location {
-      color: #ccc;
+      color: #666;
       font-size: 0.5rem;
     }
 
@@ -194,7 +194,7 @@
     }
 
     .away-game {
-      color: #e76e55;
+      color: #c13c2f;
     }
 
     @media (max-width: 900px) {
@@ -245,7 +245,7 @@
 
     <div id="player-content" style="display: none;">
       <!-- Header del jugador -->
-      <div class="nes-container is-dark player-header">
+      <div class="nes-container player-header">
         <h1 class="player-name" id="player-name">-</h1>
         <p class="player-info">
           <span id="player-position">-</span> | 
@@ -260,7 +260,7 @@
       <!-- Grid de estadísticas -->
       <div class="dashboard-grid">
         <!-- Estadísticas principales -->
-        <div class="nes-container with-title is-dark stat-card">
+        <div class="nes-container with-title stat-card">
           <p class="title"><i class="nes-icon star is-small"></i> Estadísticas Principales</p>
           <div class="stat-row">
             <span class="stat-label">Juegos Jugados</span>
@@ -297,7 +297,7 @@
         </div>
 
         <!-- Porcentajes de tiro -->
-        <div class="nes-container with-title is-dark stat-card">
+        <div class="nes-container with-title stat-card">
           <p class="title"><i class="nes-icon trophy is-small"></i> Eficiencia</p>
           <div class="stat-row">
             <span class="stat-label">FG%</span>
@@ -330,7 +330,7 @@
         </div>
 
         <!-- Últimos 7 días -->
-        <div class="nes-container with-title is-dark stat-card">
+        <div class="nes-container with-title stat-card">
           <p class="title"><i class="nes-icon heart is-small"></i> Últimos 7 Días</p>
           <div class="stat-row">
             <span class="stat-label">Puntos/Juego</span>
@@ -355,7 +355,7 @@
         </div>
 
         <!-- Próximos Partidos -->
-        <div class="nes-container with-title is-dark stat-card">
+        <div class="nes-container with-title stat-card">
           <p class="title"><i class="nes-icon calendar is-small"></i> Próximos Partidos (7 días)</p>
           <div id="upcoming-games" class="games-list">
             Cargando partidos...
@@ -363,7 +363,7 @@
         </div>
 
         <!-- Proyecciones -->
-        <div class="nes-container with-title is-dark stat-card">
+        <div class="nes-container with-title stat-card">
           <p class="title"><i class="nes-icon close is-small"></i> Proyecciones</p>
           <div class="stat-row">
             <span class="stat-label">Puntos (Temporada)</span>
@@ -380,7 +380,7 @@
         </div>
 
         <!-- Noticias -->
-        <div class="nes-container with-title is-dark stat-card">
+        <div class="nes-container with-title stat-card">
           <p class="title"><i class="nes-icon like is-small"></i> Noticias</p>
           <div class="news-box" id="player-news">
             Cargando noticias...
