@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Player Dashboard</title>
+  <!-- NES.css -->
+  <link href="https://unpkg.com/nes.css@latest/css/nes.min.css" rel="stylesheet" />
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Press Start 2P', cursive;
+      background-color: #212529;
+      padding: 1.5rem;
+      font-size: 12px;
+    }
+
+    .container-main {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .back-button {
+      margin-bottom: 1.5rem;
+    }
+
+    .player-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .player-name {
+      color: #209cee;
+      font-size: 1.2rem;
+      margin: 0.5rem 0;
+    }
+
+    .player-info {
+      color: #92cc41;
+      font-size: 0.7rem;
+      margin: 0.3rem 0;
+    }
+
+    .status-badge {
+      display: inline-block;
+      margin-top: 0.5rem;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat-card {
+      margin-bottom: 0;
+    }
+
+    h2 {
+      font-size: 0.75rem;
+      margin-bottom: 1rem;
+      color: #fff;
+    }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.5rem 0;
+      border-bottom: 2px solid #333;
+      font-size: 0.6rem;
+    }
+
+    .stat-row:last-child {
+      border-bottom: none;
+    }
+
+    .stat-label {
+      color: #ccc;
+    }
+
+    .stat-value {
+      color: #fff;
+      font-weight: bold;
+    }
+
+    .stat-value.highlight {
+      color: #f7d51d;
+    }
+
+    .stat-value.good {
+      color: #92cc41;
+    }
+
+    .stat-value.bad {
+      color: #e76e55;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+
+    thead {
+      background-color: #209cee;
+      color: white;
+    }
+
+    th, td {
+      padding: 0.4rem;
+      text-align: left;
+      font-size: 0.5rem;
+    }
+
+    .center-text {
+      text-align: center;
+    }
+
+    .loading-text {
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.8rem;
+    }
+
+    .news-box {
+      background-color: #333;
+      padding: 0.8rem;
+      border-radius: 4px;
+      font-size: 0.55rem;
+      line-height: 1.4;
+      color: #ccc;
+    }
+
+    .acquisition-badge {
+      display: inline-block;
+      padding: 0.3rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .badge-draft {
+      background-color: #209cee;
+      color: white;
+    }
+
+    .badge-fa {
+      background-color: #92cc41;
+      color: #212529;
+    }
+
+    .games-played-badge {
+      display: inline-block;
+      font-size: 0.55rem;
+    }
+
+    .games-played-badge .nes-badge {
+      vertical-align: middle;
+    }
+
+    .games-list {
+      font-size: 0.55rem;
+    }
+
+    .game-item {
+      padding: 0.6rem 0;
+      border-bottom: 2px solid #333;
+    }
+
+    .game-item:last-child {
+      border-bottom: none;
+    }
+
+    .game-date {
+      color: #92cc41;
+      font-weight: bold;
+      margin-bottom: 0.3rem;
+    }
+
+    .game-matchup {
+      color: #fff;
+      margin-bottom: 0.2rem;
+    }
+
+    .game-location {
+      color: #ccc;
+      font-size: 0.5rem;
+    }
+
+    .home-game {
+      color: #209cee;
+    }
+
+    .away-game {
+      color: #e76e55;
+    }
+
+    @media (max-width: 900px) {
+      body {
+        padding: 0.5rem;
+        font-size: 10px;
+      }
+
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .player-name {
+        font-size: 0.9rem;
+      }
+
+      .player-info {
+        font-size: 0.6rem;
+      }
+
+      h2 {
+        font-size: 0.65rem;
+      }
+
+      .stat-row {
+        font-size: 0.5rem;
+      }
+
+      th, td {
+        font-size: 0.45rem;
+        padding: 0.25rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container-main">
+    <div class="back-button">
+      <button type="button" class="nes-btn" onclick="window.location.href='/'">
+        &lt; Volver
+      </button>
+    </div>
+
+    <div id="loading" class="loading-text">
+      <span class="nes-text is-warning">Cargando jugador...</span>
+    </div>
+
+    <div id="player-content" style="display: none;">
+      <!-- Header del jugador -->
+      <div class="nes-container is-dark player-header">
+        <h1 class="player-name" id="player-name">-</h1>
+        <p class="player-info">
+          <span id="player-position">-</span> | 
+          <span id="player-team">-</span>
+        </p>
+        <p class="player-info" id="fantasy-team-name">-</p>
+        <div id="injury-status"></div>
+        <div id="games-played-badge" style="margin-top: 0.5rem;"></div>
+        <div id="acquisition-info"></div>
+      </div>
+
+      <!-- Grid de estadísticas -->
+      <div class="dashboard-grid">
+        <!-- Estadísticas principales -->
+        <div class="nes-container with-title is-dark stat-card">
+          <p class="title"><i class="nes-icon star is-small"></i> Estadísticas Principales</p>
+          <div class="stat-row">
+            <span class="stat-label">Juegos Jugados</span>
+            <span class="stat-value" id="stat-gp">-</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Minutos/Juego</span>
+            <span class="stat-value" id="stat-mpg">-</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Puntos/Juego</span>
+            <span class="stat-value highlight" id="stat-ppg">-</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Rebotes/Juego</span>
+            <span class="stat-value" id="stat-rpg">-</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Asistencias/Juego</span>
+            <span class="stat-value" id="stat-apg">-</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Robos/Juego</span>
+            <span class="stat-value" id="stat-spg">-</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Bloqueos/Juego</span>
+            <span class="stat-value" id="stat-bpg">-</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Pérdidas/Juego</span>
+            <span class="stat-value bad" id="stat-tpg">-</span>
+          </div>
+        </div>
+
+        <!-- Porcentajes de tiro -->
+        <div class="nes-container with-title is-dark stat-card">
+          <p class="title"><i class="nes-icon trophy is-small"></i> Eficiencia</p>
+          <div class="stat-row">
+            <span class="stat-label">FG%</span>
+            <span class="stat-value good" id="stat-fgp">-</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">FT%</span>
+            <span class="stat-value good" id="stat-ftp">-</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">3PM/Juego</span>
+            <span class="stat-value" id="stat-3pm">-</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">3PT%</span>
+            <span class="stat-value good" id="stat-3pp">-</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Double-Doubles</span>
+            <span class="stat-value highlight" id="stat-dd">-</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Triple-Doubles</span>
+            <span class="stat-value highlight" id="stat-td">-</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Puntos Fantasy/Juego</span>
+            <span class="stat-value highlight" id="stat-fppg">-</span>
+          </div>
+        </div>
+
+        <!-- Últimos 7 días -->
+        <div class="nes-container with-title is-dark stat-card">
+          <p class="title"><i class="nes-icon heart is-small"></i> Últimos 7 Días</p>
+          <div class="stat-row">
+            <span class="stat-label">Puntos/Juego</span>
+            <span class="stat-value" id="stat-l7-ppg">-</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Rebotes/Juego</span>
+            <span class="stat-value" id="stat-l7-rpg">-</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Asistencias/Juego</span>
+            <span class="stat-value" id="stat-l7-apg">-</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">FG%</span>
+            <span class="stat-value" id="stat-l7-fgp">-</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Puntos Fantasy</span>
+            <span class="stat-value highlight" id="stat-l7-fppg">-</span>
+          </div>
+        </div>
+
+        <!-- Próximos Partidos -->
+        <div class="nes-container with-title is-dark stat-card">
+          <p class="title"><i class="nes-icon calendar is-small"></i> Próximos Partidos (7 días)</p>
+          <div id="upcoming-games" class="games-list">
+            Cargando partidos...
+          </div>
+        </div>
+
+        <!-- Proyecciones -->
+        <div class="nes-container with-title is-dark stat-card">
+          <p class="title"><i class="nes-icon close is-small"></i> Proyecciones</p>
+          <div class="stat-row">
+            <span class="stat-label">Puntos (Temporada)</span>
+            <span class="stat-value" id="proj-pts">-</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Rebotes (Temporada)</span>
+            <span class="stat-value" id="proj-reb">-</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-label">Asistencias (Temporada)</span>
+            <span class="stat-value" id="proj-ast">-</span>
+          </div>
+        </div>
+
+        <!-- Noticias -->
+        <div class="nes-container with-title is-dark stat-card">
+          <p class="title"><i class="nes-icon like is-small"></i> Noticias</p>
+          <div class="news-box" id="player-news">
+            Cargando noticias...
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="player-detail.js?v=4"></script>
+</body>
+</html>

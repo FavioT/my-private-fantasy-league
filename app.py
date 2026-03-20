@@ -1,0 +1,204 @@
+from flask import Flask, jsonify, send_from_directory
+from flask_cors import CORS
+from espn_api.basketball import League
+from mock_data import MOCK_TEAMS, MOCK_PLAYERS
+from mock_player_details import MOCK_PLAYER_DETAILS
+from datetime import datetime, timedelta
+
+app = Flask(__name__)
+CORS(app)
+
+# Cambiar a False para usar datos reales de ESPN
+USE_MOCK = False
+
+def get_league():
+    return League(
+        league_id=76117164,
+        year=2026,
+        espn_s2='AEBmFeUmTSryp0cGx8qZ7bQ5kpucH7tgYxY9k7V776NBbap9vCQaxqUij%2BS2McI7VbhxKxpu%2F%2FNRioOjV%2FCsAG9VVZLS3plbxcWCoUG2ea9rRn%2Bewg7D1Arpte8kYsvYpTGBKyLwaETILDeBHtVr%2FgiTERCurvzPH9JGXBnYkn3bdvAPxptcEAr1Sb1UKikOEhDvUCnG6kKnpf1yepo%2FzSyE80%2BuApbvkNrjgIyjpfHv1AX2Ip%2Bj%2F1WN24m4RFlPx8cBThF3%2BCIhQgPc%2FbhhVEPT6NEgb5q67I6N2qPby48u5Q%3D%3D', 
+        swid='{DA611254-3C72-4FA0-8A47-D236659F6792}'
+    )
+
+# Rutas para servir archivos estáticos
+@app.route('/')
+def index():
+    return send_from_directory('.', 'index.html')
+
+@app.route('/player-detail.html')
+def player_detail_page():
+    return send_from_directory('.', 'player-detail.html')
+
+@app.route('/<path:filename>')
+def serve_static(filename):
+    return send_from_directory('.', filename)
+
+@app.route("/teams")
+def get_teams():
+    if USE_MOCK:
+        return jsonify(MOCK_TEAMS)
+    
+    league = get_league()
+
+    teams = []
+    for team in league.teams:
+        teams.append({
+            "id": team.team_id,
+            "name": team.team_name,
+            "wins": team.wins,
+            "losses": team.losses
+        })
+
+    return jsonify(teams)
+
+@app.route("/teams/<int:team_id>/players")
+def get_team_players(team_id):
+    if USE_MOCK:
+        if team_id in MOCK_PLAYERS:
+            return jsonify(MOCK_PLAYERS[team_id])
+        else:
+            return jsonify({"error": "Team not found"}), 404
+    
+    league = get_league()
+    
+    team = None
+    for t in league.teams:
+        if t.team_id == team_id:
+            team = t
+            break
+    
+    if not team:
+        return jsonify({"error": "Team not found"}), 404
+    
+    players = []
+    for player in team.roster:
+        # Usar el playerId de ESPN API
+        players.append({
+            "playerId": player.playerId,
+            "name": player.name,
+            "position": player.position,
+            "team": player.proTeam,
+            "injured": player.injured,
+            "injuryStatus": player.injuryStatus if player.injured else None
+        })
+    
+    return jsonify({
+        "teamName": team.team_name,
+        "players": players
+    })
+
+@app.route("/players/<int:player_id>")
+def get_player_details(player_id):
+    if USE_MOCK:
+        if player_id in MOCK_PLAYER_DETAILS:
+            return jsonify(MOCK_PLAYER_DETAILS[player_id])
+        else:
+            return jsonify({"error": "Player not found"}), 404
+    
+    # Buscar el jugador en todos los equipos
+    league = get_league()
+    player = None
+    team_name = None
+    
+    for team in league.teams:
+        for p in team.roster:
+            if p.playerId == player_id:
+                player = p
+                team_name = team.team_name
+                break
+        if player:
+            break
+    
+    if not player:
+        return jsonify({"error": "Player not found"}), 404
+    
+    # Obtener estadísticas del jugador desde el objeto stats
+    year_key = f"{2026}_total"
+    last7_key = f"{2026}_last_7"
+    proj_key = f"{2026}_projected"
+    
+    total_stats = player.stats.get(year_key, {}) if hasattr(player, 'stats') else {}
+    last7_stats = player.stats.get(last7_key, {}) if hasattr(player, 'stats') else {}
+    proj_stats = player.stats.get(proj_key, {}) if hasattr(player, 'stats') else {}
+    
+    # Obtener promedios y totales
+    avg = total_stats.get('avg', {})
+    total = total_stats.get('total', {})
+    last7_avg = last7_stats.get('avg', {})
+    proj_avg = proj_stats.get('avg', {})
+    proj_total = proj_stats.get('total', {})
+    
+    # Generar próximos partidos desde el schedule
+    today = datetime.now()
+    upcoming_games = []
+    
+    if hasattr(player, 'schedule'):
+        # Filtrar solo próximos partidos (7 días desde hoy)
+        sorted_games = sorted(
+            [(k, v) for k, v in player.schedule.items() if v.get('date') and v['date'] > today],
+            key=lambda x: x[1]['date']
+        )
+        
+        for _, game_info in sorted_games[:5]:  # Tomar los primeros 5 partidos
+            upcoming_games.append({
+                "date": game_info['date'].strftime("%Y-%m-%d"),
+                "opponent": game_info.get('team', 'TBD'),
+                "isHome": True  # ESPN API no especifica claramente home/away
+            })
+    
+    # Construir respuesta con datos reales
+    response = {
+        "playerId": player.playerId,
+        "name": player.name,
+        "position": player.position,
+        "proTeam": player.proTeam,
+        "teamName": team_name,
+        "injured": player.injured,
+        "injuryStatus": player.injuryStatus if player.injured else None,
+        "acquisitionType": player.acquisitionType if hasattr(player, 'acquisitionType') else "FREE_AGENT",
+        "draftRound": None,
+        "draftPick": None,
+        "stats": {
+            "gamesPlayed": int(avg.get('GP', 0)),
+            "minutesPerGame": round(avg.get('MPG', 0), 1),
+            "pointsPerGame": round(avg.get('PPG', 0), 1),
+            "reboundsPerGame": round(avg.get('RPG', 0), 1),
+            "assistsPerGame": round(avg.get('APG', 0), 1),
+            "stealsPerGame": round(avg.get('SPG', 0), 1),
+            "blocksPerGame": round(avg.get('BPG', 0), 1),
+            "turnoversPerGame": round(avg.get('TOPG', 0), 1),
+            "fieldGoalPct": round(avg.get('FG%', 0) * 100, 1),
+            "freeThrowPct": round(avg.get('FT%', 0) * 100, 1),
+            "threePointMade": round(avg.get('3PG', 0), 1),
+            "threePointPct": round(avg.get('3PT%', 0) * 100, 1),
+            "totalPoints": int(total.get('PTS', 0)),
+            "totalRebounds": int(total.get('REB', 0)),
+            "totalAssists": int(total.get('AST', 0)),
+            "totalSteals": int(total.get('STL', 0)),
+            "totalBlocks": int(total.get('BLK', 0)),
+            "doubleDoubles": int(total.get('DD', 0)),
+            "tripleDoubles": int(total.get('TD', 0)),
+            "avgFantasyPoints": round(player.avg_points, 1)
+        },
+        "lastSevenDays": {
+            "pointsPerGame": round(last7_avg.get('PPG', 0), 1),
+            "reboundsPerGame": round(last7_avg.get('RPG', 0), 1),
+            "assistsPerGame": round(last7_avg.get('APG', 0), 1),
+            "fieldGoalPct": round(last7_avg.get('FG%', 0) * 100, 1),
+            "avgFantasyPoints": round(last7_stats.get('applied_avg', 0), 1)
+        },
+        "projections": {
+            "seasonPoints": int(proj_total.get('PTS', 0)),
+            "seasonRebounds": int(proj_total.get('REB', 0)),
+            "seasonAssists": int(proj_total.get('AST', 0))
+        },
+        "upcomingGames": upcoming_games if upcoming_games else [
+            {"date": (today + timedelta(days=2)).strftime("%Y-%m-%d"), "opponent": "TBD", "isHome": True},
+            {"date": (today + timedelta(days=4)).strftime("%Y-%m-%d"), "opponent": "TBD", "isHome": False}
+        ],
+        "news": getattr(player.news, 'headline', 'Datos en tiempo real de ESPN API') if hasattr(player, 'news') and player.news else "Datos en tiempo real de ESPN API"
+    }
+    
+    return jsonify(response)
+
+if __name__ == "__main__":
+    app.run(debug=True)

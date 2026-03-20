@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fantasy Dashboard</title>
+  <!-- NES.css -->
+  <link href="https://unpkg.com/nes.css@latest/css/nes.min.css" rel="stylesheet" />
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Press Start 2P', cursive;
+      background-color: #212529;
+      padding: 1.5rem;
+      font-size: 12px;
+    }
+
+    .container-main {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      color: #209cee;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      font-size: 1rem;
+    }
+
+    h2 {
+      font-size: 0.75rem;
+    }
+
+    .panels-container {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+    
+    .panel-left {
+      flex: 1;
+      min-width: 300px;
+    }
+    
+    .panel-right {
+      flex: 1;
+      min-width: 300px;
+    }
+
+    .nes-container {
+      margin-bottom: 1rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+
+    thead {
+      background-color: #209cee;
+      color: white;
+    }
+
+    th, td {
+      padding: 0.4rem;
+      text-align: left;
+      font-size: 0.55rem;
+    }
+
+    th {
+      font-size: 0.5rem;
+    }
+
+    .center-text {
+      text-align: center;
+    }
+
+    .clickable-row {
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    .clickable-row:hover {
+      background-color: #92cc41;
+    }
+    
+    .selected-row {
+      background-color: #f7d51d !important;
+    }
+
+    .player-injured {
+      color: #e76e55;
+    }
+
+    .loading-text {
+      text-align: center;
+      padding: 0.8rem;
+      font-size: 0.6rem;
+    }
+
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 0.8rem;
+      font-size: 0.55rem;
+    }
+
+    .nes-icon {
+      transform: scale(0.8);
+    }
+
+    @media (max-width: 900px) {
+      body {
+        padding: 0.5rem;
+        font-size: 10px;
+      }
+
+      h1 {
+        font-size: 0.75rem;
+        margin-bottom: 1rem;
+      }
+
+      h2 {
+        font-size: 0.6rem;
+      }
+      
+      .panels-container {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .panel-left,
+      .panel-right {
+        min-width: 100%;
+      }
+
+      th, td {
+        font-size: 0.45rem;
+        padding: 0.25rem;
+      }
+
+      th {
+        font-size: 0.4rem;
+      }
+
+      .loading-text {
+        font-size: 0.5rem;
+        padding: 0.5rem;
+      }
+
+      .status-bar {
+        font-size: 0.45rem;
+        margin-top: 0.5rem;
+      }
+
+      .nes-icon {
+        transform: scale(0.6);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container-main">
+    <h1>
+      <i class="nes-logo"></i>
+      Fantasy Basketball Dashboard
+    </h1>
+
+    <div class="panels-container">
+      <!-- Panel izquierdo: Equipos -->
+      <div class="panel-left">
+        <div class="nes-container with-title is-dark">
+          <p class="title"><i class="nes-icon star is-small"></i> Equipos</p>
+          
+          <div id="teams-loading" class="loading-text">
+            <span class="nes-text is-warning">Cargando equipos...</span>
+          </div>
+
+          <div class="nes-table-responsive" id="teams-container" style="display: none;">
+            <table class="nes-table is-bordered is-dark">
+              <thead>
+                <tr>
+                  <th class="center-text">#</th>
+                  <th>Equipo</th>
+                  <th class="center-text">W</th>
+                  <th class="center-text">L</th>
+                  <th class="center-text">%</th>
+                </tr>
+              </thead>
+              <tbody id="teams">
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Panel derecho: Jugadores -->
+      <div class="panel-right">
+        <div class="nes-container with-title is-dark">
+          <p class="title"><i class="nes-icon coin is-small"></i> <span id="players-header">Jugadores</span></p>
+          
+          <div id="players-empty" class="loading-text">
+            <span class="nes-text is-primary">▶ Selecciona un equipo</span>
+          </div>
+
+          <div id="players-loading" class="loading-text" style="display: none;">
+            <span class="nes-text is-warning">Cargando jugadores...</span>
+          </div>
+
+          <div class="nes-table-responsive" id="players-container" style="display: none;">
+            <table class="nes-table is-bordered is-dark">
+              <thead>
+                <tr>
+                  <th>Jugador</th>
+                  <th class="center-text">Pos</th>
+                  <th class="center-text">Team</th>
+                  <th class="center-text">Estado</th>
+                </tr>
+              </thead>
+              <tbody id="players">
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="main.js?v=3"></script>
+</body>
+</html>
