@@ -2,6 +2,22 @@
 
 Dashboard de Fantasy Basketball con estilo retro SNES usando NES.css
 
+## 📖 Acerca de
+
+My Private Fantasy League es una aplicación web que transforma los datos de ESPN Fantasy Basketball en un dashboard retro con estética de videojuegos clásicos de SNES. La aplicación consume la API de ESPN en tiempo real para mostrar estadísticas, proyecciones, calendarios de partidos y detalles completos de jugadores con una interfaz pixel art nostálgica.
+
+**Ideal para:**
+- 🎮 Fanáticos del basketball que aman la estética retro gaming
+- 📊 Managers de fantasy que quieren una vista personalizada de sus ligas
+- 🏆 Usuarios de ESPN Fantasy Basketball buscando una experiencia visual única
+
+**Características principales:**
+- Visualización en tiempo real de rosters, stats y proyecciones
+- Dashboard detallado por jugador con 6 categorías de estadísticas
+- Sistema de badges dinámicos para injuries y games-played %
+- Calendario de próximos partidos con fechas y rivales
+- Modo mock para desarrollo sin credenciales
+
 ## 🎮 Características
 
 - **Interfaz Retro**: Estilo pixel art SNES con NES.css
