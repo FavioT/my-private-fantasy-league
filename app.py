@@ -4,19 +4,31 @@ from espn_api.basketball import League
 from mock_data import MOCK_TEAMS, MOCK_PLAYERS
 from mock_player_details import MOCK_PLAYER_DETAILS
 from datetime import datetime, timedelta
+from dotenv import load_dotenv
+import os
+
+# Cargar variables de entorno desde .env
+load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
 
-# Cambiar a False para usar datos reales de ESPN
-USE_MOCK = False
+# Configuración desde variables de entorno
+USE_MOCK = os.getenv('USE_MOCK', 'False').lower() == 'true'
+LEAGUE_ID = int(os.getenv('LEAGUE_ID', '0'))
+LEAGUE_YEAR = int(os.getenv('LEAGUE_YEAR', '2026'))
+ESPN_S2 = os.getenv('ESPN_S2', '')
+SWID = os.getenv('SWID', '')
 
 def get_league():
+    if not LEAGUE_ID or not ESPN_S2 or not SWID:
+        raise ValueError("Configuración incompleta. Revisa tu archivo .env")
+    
     return League(
-        league_id=76117164,
-        year=2026,
-        espn_s2='AEBmFeUmTSryp0cGx8qZ7bQ5kpucH7tgYxY9k7V776NBbap9vCQaxqUij%2BS2McI7VbhxKxpu%2F%2FNRioOjV%2FCsAG9VVZLS3plbxcWCoUG2ea9rRn%2Bewg7D1Arpte8kYsvYpTGBKyLwaETILDeBHtVr%2FgiTERCurvzPH9JGXBnYkn3bdvAPxptcEAr1Sb1UKikOEhDvUCnG6kKnpf1yepo%2FzSyE80%2BuApbvkNrjgIyjpfHv1AX2Ip%2Bj%2F1WN24m4RFlPx8cBThF3%2BCIhQgPc%2FbhhVEPT6NEgb5q67I6N2qPby48u5Q%3D%3D', 
-        swid='{DA611254-3C72-4FA0-8A47-D236659F6792}'
+        league_id=LEAGUE_ID,
+        year=LEAGUE_YEAR,
+        espn_s2=ESPN_S2, 
+        swid=SWID
     )
 
 # Rutas para servir archivos estáticos
