@@ -12,8 +12,142 @@
     body {
       font-family: 'Press Start 2P', cursive;
       background-color: #f0f0f0;
-      padding: 1.5rem;
+      padding: 0;
       font-size: 12px;
+    }
+
+    /* Navbar Styles */
+    .navbar {
+      background-color: #209cee;
+      padding: 1rem 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 4px 4px 0 #000;
+    }
+
+    .navbar-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .navbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: white;
+      font-size: 0.7rem;
+      text-decoration: none;
+    }
+
+    .navbar-brand:hover {
+      color: #f7d51d;
+    }
+
+    .navbar-menu {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .navbar-item {
+      position: relative;
+    }
+
+    .navbar-link {
+      color: white;
+      text-decoration: none;
+      font-size: 0.55rem;
+      padding: 0.5rem 0.8rem;
+      display: inline-block;
+      border: 2px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .navbar-link:hover {
+      background-color: #f7d51d;
+      color: #212529;
+      border-color: #000;
+    }
+
+    .navbar-link.active {
+      background-color: white;
+      color: #209cee;
+      border-color: #000;
+    }
+
+    .dropdown {
+      position: relative;
+    }
+
+    .dropdown-toggle {
+      cursor: pointer;
+      color: white;
+      font-size: 0.55rem;
+      padding: 0.5rem 0.8rem;
+      display: inline-block;
+      border: 2px solid transparent;
+      background: none;
+      font-family: 'Press Start 2P', cursive;
+    }
+
+    .dropdown-toggle:hover {
+      background-color: #f7d51d;
+      color: #212529;
+      border-color: #000;
+    }
+
+    .dropdown-toggle::after {
+      content: ' ▼';
+      font-size: 0.4rem;
+    }
+
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background-color: white;
+      border: 4px solid #000;
+      box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
+      min-width: 200px;
+      z-index: 1000;
+      margin-top: 0.5rem;
+      padding: 0.5rem 0;
+    }
+
+    .dropdown-menu.show {
+      display: block;
+    }
+
+    .dropdown-item {
+      display: block;
+      padding: 0.6rem 1rem;
+      color: #212529;
+      text-decoration: none;
+      font-size: 0.5rem;
+      transition: background-color 0.2s;
+    }
+
+    .dropdown-item:hover {
+      background-color: #92cc41;
+      color: white;
+    }
+
+    .dropdown-divider {
+      height: 2px;
+      background-color: #000;
+      margin: 0.5rem 0;
+    }
+
+    .content-wrapper {
+      padding: 0 1.5rem 1.5rem 1.5rem;
     }
 
     .container-main {
@@ -114,8 +248,44 @@
 
     @media (max-width: 900px) {
       body {
-        padding: 0.5rem;
+        padding: 0;
         font-size: 10px;
+      }
+
+      .navbar {
+        padding: 0.8rem;
+      }
+
+      .navbar-content {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .navbar-brand {
+        font-size: 0.6rem;
+      }
+
+      .navbar-menu {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+        width: 100%;
+      }
+
+      .navbar-link,
+      .dropdown-toggle {
+        font-size: 0.5rem;
+        padding: 0.4rem 0.6rem;
+      }
+
+      .dropdown-menu {
+        position: static;
+        box-shadow: none;
+        margin-top: 0.3rem;
+      }
+
+      .content-wrapper {
+        padding: 0.5rem;
       }
 
       h1 {
@@ -163,7 +333,48 @@
   </style>
 </head>
 <body>
-  <div class="container-main">
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="navbar-content">
+      <a href="/" class="navbar-brand">
+        <i class="nes-icon trophy is-small"></i>
+        <span>Fantasy League</span>
+      </a>
+      <ul class="navbar-menu">
+        <li class="navbar-item">
+          <a href="/" class="navbar-link active">Dashboard</a>
+        </li>
+        <li class="navbar-item dropdown">
+          <button class="dropdown-toggle" onclick="toggleDropdown('dropdown-teams')">
+            Equipos
+          </button>
+          <div id="dropdown-teams" class="dropdown-menu">
+            <a href="#" class="dropdown-item">Ver Todos</a>
+            <a href="#" class="dropdown-item">Clasificación</a>
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item">Mi Equipo</a>
+          </div>
+        </li>
+        <li class="navbar-item dropdown">
+          <button class="dropdown-toggle" onclick="toggleDropdown('dropdown-stats')">
+            Estadísticas
+          </button>
+          <div id="dropdown-stats" class="dropdown-menu">
+            <a href="#" class="dropdown-item">Líderes</a>
+            <a href="#" class="dropdown-item">Comparar Jugadores</a>
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item">Proyecciones</a>
+            <a href="#" class="dropdown-item">Tendencias</a>
+          </div>
+        </li>
+        <li class="navbar-item">
+          <a href="#" class="navbar-link">Calendario</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container-main content-wrapper">
     <h1>
       <i class="nes-logo"></i>
       Fantasy Basketball Dashboard
@@ -230,6 +441,31 @@
     </div>
   </div>
 
+  <script>
+    // Dropdown functionality
+    function toggleDropdown(id) {
+      const dropdown = document.getElementById(id);
+      const allDropdowns = document.querySelectorAll('.dropdown-menu');
+      
+      // Close all other dropdowns
+      allDropdowns.forEach(dd => {
+        if (dd.id !== id) {
+          dd.classList.remove('show');
+        }
+      });
+      
+      // Toggle current dropdown
+      dropdown.classList.toggle('show');
+    }
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(event) {
+      if (!event.target.matches('.dropdown-toggle')) {
+        const dropdowns = document.querySelectorAll('.dropdown-menu');
+        dropdowns.forEach(dd => dd.classList.remove('show'));
+      }
+    });
+  </script>
   <script src="main.js?v=3"></script>
 </body>
 </html>
