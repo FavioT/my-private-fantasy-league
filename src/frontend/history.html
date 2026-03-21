@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Estadísticas Históricas - Fantasy League</title>
+  <!-- NES.css -->
+  <link href="https://unpkg.com/nes.css@latest/css/nes.min.css" rel="stylesheet" />
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Press Start 2P', cursive;
+      background-color: #f0f0f0;
+      padding: 0;
+      font-size: 12px;
+    }
+
+    /* Navbar Styles */
+    .navbar {
+      background-color: #209cee;
+      padding: 1rem 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 4px 4px 0 #000;
+    }
+
+    .navbar-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .navbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: white;
+      font-size: 0.7rem;
+      text-decoration: none;
+    }
+
+    .navbar-brand:hover {
+      color: #f7d51d;
+    }
+
+    .navbar-menu {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .navbar-item {
+      position: relative;
+    }
+
+    .navbar-link {
+      color: white;
+      text-decoration: none;
+      font-size: 0.55rem;
+      padding: 0.5rem 0.8rem;
+      display: inline-block;
+      border: 2px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .navbar-link:hover {
+      background-color: #f7d51d;
+      color: #212529;
+      border-color: #000;
+    }
+
+    .navbar-link.active {
+      background-color: white;
+      color: #209cee;
+      border-color: #000;
+    }
+
+    .container-main {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 1rem 2rem 1rem;
+    }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .page-title {
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      color: #209cee;
+    }
+
+    .tabs-container {
+      margin-bottom: 2rem;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .tab-button {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 0.5rem;
+      padding: 0.7rem 1rem;
+      background-color: white;
+      border: 4px solid #000;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab-button:hover {
+      background-color: #f7d51d;
+      transform: translateY(-2px);
+    }
+
+    .tab-button.active {
+      background-color: #209cee;
+      color: white;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: white;
+      border: 4px solid #000;
+      padding: 1.5rem;
+      box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
+    }
+
+    .stat-card-header {
+      font-size: 0.6rem;
+      margin-bottom: 1rem;
+      color: #209cee;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .stat-card-body {
+      font-size: 0.5rem;
+      line-height: 1.8;
+    }
+
+    .stat-value {
+      font-size: 0.7rem;
+      color: #92cc41;
+      margin: 0.5rem 0;
+    }
+
+    .stat-label {
+      color: #666;
+      font-size: 0.45rem;
+    }
+
+    .champions-list {
+      list-style: none;
+      padding: 0;
+      margin: 1rem 0;
+    }
+
+    .champion-item {
+      background: white;
+      border: 3px solid #000;
+      padding: 1rem;
+      margin-bottom: 0.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all 0.2s;
+    }
+
+    .champion-item:hover {
+      background-color: #f7d51d;
+      transform: translateX(5px);
+    }
+
+    .champion-year {
+      font-size: 0.6rem;
+      color: #209cee;
+      font-weight: bold;
+    }
+
+    .champion-info {
+      flex: 1;
+      margin: 0 1rem;
+      font-size: 0.5rem;
+    }
+
+    .champion-record {
+      font-size: 0.45rem;
+      color: #666;
+    }
+
+    .owner-table {
+      background: white;
+      border: 4px solid #000;
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.45rem;
+    }
+
+    .owner-table th,
+    .owner-table td {
+      border: 2px solid #000;
+      padding: 0.8rem;
+      text-align: left;
+    }
+
+    .owner-table th {
+      background-color: #209cee;
+      color: white;
+      font-size: 0.5rem;
+    }
+
+    .owner-table tbody tr:hover {
+      background-color: #f0f0f0;
+    }
+
+    .trophy-icon {
+      color: #f7d51d;
+      font-size: 0.7rem;
+    }
+
+    .rank-badge {
+      display: inline-block;
+      width: 25px;
+      height: 25px;
+      line-height: 25px;
+      text-align: center;
+      border: 2px solid #000;
+      background: #92cc41;
+      color: white;
+      font-size: 0.5rem;
+      font-weight: bold;
+    }
+
+    .rank-badge.gold {
+      background: #f7d51d;
+    }
+
+    .rank-badge.silver {
+      background: #c0c0c0;
+    }
+
+    .rank-badge.bronze {
+      background: #cd7f32;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.6rem;
+      color: #666;
+    }
+
+    .error-message {
+      background: #e76e55;
+      color: white;
+      padding: 1rem;
+      border: 4px solid #000;
+      margin: 1rem 0;
+      font-size: 0.5rem;
+    }
+
+    .player-table {
+      background: white;
+      border: 4px solid #000;
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.45rem;
+      margin-top: 1rem;
+    }
+
+    .player-table th,
+    .player-table td {
+      border: 2px solid #000;
+      padding: 0.8rem;
+      text-align: left;
+    }
+
+    .player-table th {
+      background-color: #92cc41;
+      color: white;
+      font-size: 0.5rem;
+    }
+
+    .player-table tbody tr:hover {
+      background-color: #f0f0f0;
+    }
+
+    .year-filter {
+      margin-bottom: 1.5rem;
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .year-badge {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 0.45rem;
+      padding: 0.5rem 0.8rem;
+      background: white;
+      border: 3px solid #000;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .year-badge:hover {
+      background: #f7d51d;
+    }
+
+    .year-badge.active {
+      background: #209cee;
+      color: white;
+    }
+
+    @media (max-width: 768px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .navbar-menu {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .owner-table,
+      .player-table {
+        font-size: 0.4rem;
+      }
+
+      .owner-table th,
+      .owner-table td,
+      .player-table th,
+      .player-table td {
+        padding: 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="navbar-content">
+      <a href="/" class="navbar-brand">
+        <i class="nes-icon trophy is-small"></i>
+        <span>Fantasy League</span>
+      </a>
+      <ul class="navbar-menu">
+        <li class="navbar-item">
+          <a href="/" class="navbar-link">Dashboard</a>
+        </li>
+        <li class="navbar-item">
+          <a href="/history.html" class="navbar-link active">Historial</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="container-main">
+    <div class="page-header">
+      <h1 class="page-title">
+        <i class="nes-icon star"></i>
+        Estadísticas Históricas
+      </h1>
+      <p class="nes-text is-primary" style="font-size: 0.5rem;">
+        Desde 2020 hasta hoy
+      </p>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs-container">
+      <div class="tabs">
+        <button class="tab-button active" onclick="switchTab('champions')">
+          <i class="nes-icon trophy is-small"></i> Campeones
+        </button>
+        <button class="tab-button" onclick="switchTab('owners')">
+          <i class="nes-icon star is-small"></i> Dueños
+        </button>
+        <button class="tab-button" onclick="switchTab('players')">
+          <i class="nes-icon coin is-small"></i> Jugadores
+        </button>
+        <button class="tab-button" onclick="switchTab('seasons')">
+          <i class="nes-icon trophy is-small"></i> Por Temporada
+        </button>
+      </div>
+
+      <!-- Champions Tab -->
+      <div id="tab-champions" class="tab-content active">
+        <div class="nes-container is-rounded with-title">
+          <p class="title">🏆 Historial de Campeones</p>
+          <div id="champions-list" class="loading">
+            Cargando campeones...
+          </div>
+        </div>
+      </div>
+
+      <!-- Owners Tab -->
+      <div id="tab-owners" class="tab-content">
+        <div class="nes-container is-rounded with-title">
+          <p class="title">⭐ Estadísticas de Dueños</p>
+          <div id="owners-stats" class="loading">
+            Cargando estadísticas...
+          </div>
+        </div>
+      </div>
+
+      <!-- Players Tab -->
+      <div id="tab-players" class="tab-content">
+        <div class="nes-container is-rounded with-title">
+          <p class="title">🎮 Top Jugadores Históricos</p>
+          <div id="players-stats" class="loading">
+            Cargando jugadores...
+          </div>
+        </div>
+      </div>
+
+      <!-- Seasons Tab -->
+      <div id="tab-seasons" class="tab-content">
+        <div class="nes-container is-rounded with-title">
+          <p class="title">📊 Resumen por Temporada</p>
+          <div class="year-filter" id="year-filter">
+            <span style="font-size: 0.5rem;">Selecciona año:</span>
+          </div>
+          <div id="season-summary" class="loading">
+            Cargando temporadas...
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/history.js"></script>
+</body>
+</html>

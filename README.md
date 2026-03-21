@@ -50,8 +50,8 @@ cp .env.example .env
 # Compilar TypeScript
 npx tsc
 
-# Ejecutar servidor
-python app.py
+# Ejecutar servidor (desde la raíz del proyecto)
+python src/backend/app.py
 ```
 
 ## 🔐 Obtener Credenciales de ESPN
@@ -94,14 +94,28 @@ USE_MOCK=False  # True para datos mock, False para ESPN API real
 ## 📁 Estructura del Proyecto
 
 ```
-├── app.py                    # Backend Flask
-├── index.html                # Dashboard principal
-├── player-detail.html        # Página de detalles del jugador
-├── main.ts                   # Lógica del dashboard
-├── player-detail.ts          # Lógica de detalles
-├── mock_data.py              # Datos mock de equipos
-├── mock_player_details.py    # Datos mock de jugadores
-└── tsconfig.json             # Configuración TypeScript
+├── src/
+│   ├── backend/              # Código del servidor
+│   │   ├── app.py           # Backend Flask
+│   │   ├── mocks/           # Datos mock para desarrollo
+│   │   │   ├── mock_data.py
+│   │   │   └── mock_player_details.py
+│   │   └── scripts/         # Scripts de utilidad
+│   │       ├── ejemplos_espn_api.py
+│   │       ├── inspect_espn_api.py
+│   │       └── generate_mock.py
+│   └── frontend/            # Código del cliente
+│       ├── index.html       # Dashboard principal
+│       ├── player-detail.html # Página de detalles
+│       └── js/              # JavaScript/TypeScript
+│           ├── main.ts
+│           ├── main.js
+│           ├── player-detail.ts
+│           └── player-detail.js
+├── .env                     # Configuración (no en git)
+├── .env.example             # Ejemplo de configuración
+├── requirements.txt         # Dependencias Python
+└── tsconfig.json           # Configuración TypeScript
 ```
 
 ## 🏆 Features

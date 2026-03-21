@@ -41,3 +41,8 @@ test_api.py
 # Database
 *.db
 *.sqlite
+
+# Historical data (private league data)
+data/season_*.json
+!data/season_example.json
+!data/README.md

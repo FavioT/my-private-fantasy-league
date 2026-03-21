@@ -1,14 +1,17 @@
-from flask import Flask, jsonify, send_from_directory
+from flask import Flask, jsonify, send_from_directory, request
 from flask_cors import CORS
 from espn_api.basketball import League
-from mock_data import MOCK_TEAMS, MOCK_PLAYERS
-from mock_player_details import MOCK_PLAYER_DETAILS
+from mocks.mock_data import MOCK_TEAMS, MOCK_PLAYERS
+from mocks.mock_player_details import MOCK_PLAYER_DETAILS
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 import os
+from data_manager import LeagueDataManager
+from analytics import HistoricalAnalytics
 
-# Cargar variables de entorno desde .env
-load_dotenv()
+# Cargar variables de entorno desde .env (en la raíz del proyecto)
+dotenv_path = os.path.join(os.path.dirname(__file__), '..', '..', '.env')
+load_dotenv(dotenv_path)
 
 app = Flask(__name__)
 CORS(app)
@@ -19,6 +22,16 @@ LEAGUE_ID = int(os.getenv('LEAGUE_ID', '0'))
 LEAGUE_YEAR = int(os.getenv('LEAGUE_YEAR', '2026'))
 ESPN_S2 = os.getenv('ESPN_S2', '')
 SWID = os.getenv('SWID', '')
+
+# Inicializar Data Manager y Analytics
+league_config = {
+    'league_id': LEAGUE_ID,
+    'espn_s2': ESPN_S2,
+    'swid': SWID
+}
+data_dir = os.path.join(os.path.dirname(__file__), '..', '..', 'data')
+data_manager = LeagueDataManager(data_dir=data_dir, league_config=league_config)
+analytics = HistoricalAnalytics(data_manager)
 
 def get_league():
     if not LEAGUE_ID or not ESPN_S2 or not SWID:
@@ -34,15 +47,15 @@ def get_league():
 # Rutas para servir archivos estáticos
 @app.route('/')
 def index():
-    return send_from_directory('.', 'index.html')
+    return send_from_directory('../frontend', 'index.html')
 
 @app.route('/player-detail.html')
 def player_detail_page():
-    return send_from_directory('.', 'player-detail.html')
+    return send_from_directory('../frontend', 'player-detail.html')
 
 @app.route('/<path:filename>')
 def serve_static(filename):
-    return send_from_directory('.', filename)
+    return send_from_directory('../frontend', filename)
 
 @app.route("/teams")
 def get_teams():
@@ -211,6 +224,116 @@ def get_player_details(player_id):
     }
     
     return jsonify(response)
+
+
+# ============================================================================
+# ENDPOINTS DE ANALYTICS - Consultas Multi-Año
+# ============================================================================
+
+@app.route("/api/analytics/available-years")
+def get_available_years():
+    """Lista de años con datos disponibles"""
+    try:
+        years = data_manager.get_available_years()
+        return jsonify({
+            "years": years,
+            "total": len(years)
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/analytics/champions")
+def get_champions():
+    """Historial de campeones por año"""
+    try:
+        champions = analytics.get_championship_history()
+        return jsonify(champions)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/analytics/owner-stats")
+def get_owner_stats():
+    """Estadísticas agregadas de todos los dueños"""
+    try:
+        stats = analytics.get_owner_statistics()
+        return jsonify(stats)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/analytics/owner/<owner_name>")
+def get_owner_history(owner_name):
+    """Historial completo de un dueño específico"""
+    try:
+        history = analytics.get_team_performance_history(owner_name)
+        if history is None:
+            return jsonify({"error": "Owner not found"}), 404
+        return jsonify(history)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/analytics/player/<player_name>")
+def get_player_career(player_name):
+    """Estadísticas de carrera de un jugador"""
+    try:
+        career = analytics.get_player_career_stats(player_name)
+        if career is None:
+            return jsonify({"error": "Player not found in historical data"}), 404
+        return jsonify(career)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/analytics/top-scorers")
+def get_all_time_top_scorers():
+    """Top anotadores de todos los tiempos"""
+    try:
+        limit = request.args.get('limit', default=20, type=int)
+        top_scorers = analytics.get_all_time_top_scorers(limit=limit)
+        return jsonify(top_scorers)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/analytics/season/<int:year>/top-scorers")
+def get_season_top_scorers(year):
+    """Top anotadores de una temporada específica"""
+    try:
+        limit = request.args.get('limit', default=10, type=int)
+        top_scorers = analytics.get_top_scorers_by_season(year, limit=limit)
+        if not top_scorers:
+            return jsonify({"error": "Season not found"}), 404
+        return jsonify(top_scorers)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/analytics/season/<int:year>/summary")
+def get_season_summary_endpoint(year):
+    """Resumen completo de una temporada"""
+    try:
+        summary = analytics.get_season_summary(year)
+        if summary is None:
+            return jsonify({"error": "Season not found"}), 404
+        return jsonify(summary)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/analytics/season/<int:year>")
+def get_season_data(year):
+    """Datos completos de una temporada"""
+    try:
+        data = data_manager.get_season_data(year)
+        return jsonify(data)
+    except FileNotFoundError:
+        return jsonify({"error": f"Season {year} not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 if __name__ == "__main__":
     app.run(debug=True)

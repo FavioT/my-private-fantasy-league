@@ -1,0 +1,74 @@
+{
+  "year": 2023,
+  "league_name": "Example Fantasy League",
+  "current_week": 175,
+  "playoff_champion": "The Champions",
+  "teams": [
+    {
+      "team_id": 1,
+      "team_name": "The Champions",
+      "owner": "Owner 1",
+      "wins": 16,
+      "losses": 7,
+      "points_for": 2687.5,
+      "points_against": 2450.2,
+      "roster": [
+        {
+          "playerId": 3975,
+          "name": "Stephen Curry",
+          "position": "PG",
+          "proTeam": "GSW",
+          "injured": false,
+          "injuryStatus": null,
+          "avg_points": 32.5,
+          "total_points": 1820.0,
+          "stats": {}
+        },
+        {
+          "playerId": 6583,
+          "name": "Giannis Antetokounmpo",
+          "position": "PF",
+          "proTeam": "MIL",
+          "injured": false,
+          "injuryStatus": null,
+          "avg_points": 35.2,
+          "total_points": 1972.0,
+          "stats": {}
+        }
+      ]
+    },
+    {
+      "team_id": 2,
+      "team_name": "Team Two",
+      "owner": "Owner 2",
+      "wins": 14,
+      "losses": 9,
+      "points_for": 2543.8,
+      "points_against": 2501.5,
+      "roster": [
+        {
+          "playerId": 4066,
+          "name": "Luka Doncic",
+          "position": "PG",
+          "proTeam": "DAL",
+          "injured": false,
+          "injuryStatus": null,
+          "avg_points": 31.8,
+          "total_points": 1781.0,
+          "stats": {}
+        }
+      ]
+    },
+    {
+      "team_id": 3,
+      "team_name": "Third Place",
+      "owner": "Owner 3",
+      "wins": 13,
+      "losses": 10,
+      "points_for": 2478.3,
+      "points_against": 2523.7,
+      "roster": []
+    }
+  ],
+  "exported_at": "2024-03-20T10:30:00"
+}
