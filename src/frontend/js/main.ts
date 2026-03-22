@@ -80,7 +80,7 @@ async function loadAll() {
 async function loadAllYearsChampions() {
   showLoading("champions");
   const title = document.getElementById("champions-title")!;
-  title.textContent = "Campeones por Temporada";
+  title.textContent = "Campeones";
 
   try {
     const res = await fetch(`${API}/api/analytics/champions`);
@@ -121,7 +121,7 @@ async function loadAllYearsChampions() {
 async function loadAllYearsTopScorers() {
   showLoading("scorers");
   const title = document.getElementById("scorers-title")!;
-  title.textContent = "Top Scorers Histórico";
+  title.textContent = "Top Scorers";
   const col = document.getElementById("scorers-year-col")!;
   col.textContent = "AÑO";
 

@@ -11,8 +11,10 @@
     body {
       font-family: 'Press Start 2P', cursive;
       padding: 0;
-      font-size: 12px;
+      font-size: 14px;
     }
+    h1, h2, h3, h4, h5, h6, .title { font-size: 12px; }
+    .nes-btn { font-size: 12px; }
 
     /* Navbar */
     .navbar {
@@ -128,7 +130,7 @@
     }
     .stat-card-icon { margin-bottom: 0.8rem; display: block; text-align: center; }
     .stat-card-value { font-size: 1.1rem; color: #209cee; display: block; margin-bottom: 0.4rem; word-break: break-all; }
-    .stat-card-label { font-size: 0.38rem; color: #555; display: block; line-height: 1.8; }
+    .stat-card-label { font-size: 0.55rem; color: #555; display: block; line-height: 1.8; }
     .stat-card.gold  { border-color: #f7d51d; box-shadow: 4px 4px 0 #f7d51d; }
     .stat-card.green { border-color: #92cc41; box-shadow: 4px 4px 0 #92cc41; }
     .stat-card.red   { border-color: #e76e55; box-shadow: 4px 4px 0 #e76e55; }
@@ -145,8 +147,8 @@
 
     table { width: 100%; border-collapse: separate; border-spacing: 0; }
     thead { background-color: #209cee; color: white; }
-    th, td { padding: 0.4rem; text-align: left; font-size: 0.5rem; }
-    th { font-size: 0.45rem; }
+    th, td { padding: 0.4rem; text-align: left; font-size: 0.7rem; }
+    th { font-size: 0.6rem; }
     .center-text { text-align: center; }
     .clickable-row { cursor: pointer; transition: background-color 0.2s; }
     .clickable-row:hover { background-color: #92cc41; color: white; }
@@ -159,8 +161,8 @@
     @media (max-width: 900px) {
       .cards-row { grid-template-columns: repeat(2, 1fr); }
       .panels-container { grid-template-columns: 1fr; }
-      .navbar-content { flex-direction: column; align-items: flex-start; }
-      .navbar-menu { flex-direction: column; align-items: flex-start; gap: 0.5rem; width: 100%; }
+      .navbar-content { flex-direction: row; align-items: center; justify-content: space-between; }
+      .navbar-menu { flex-direction: row; align-items: center; gap: 0.5rem; }
       .navbar-link, .dropdown-toggle { font-size: 0.5rem; padding: 0.4rem 0.6rem; }
       .dropdown-menu { position: static; box-shadow: none; margin-top: 0.3rem; }
       .content-wrapper { padding: 0.5rem; }
@@ -207,12 +209,12 @@
       </div>
       <div class="stat-card green">
         <span class="stat-card-icon"><i class="nes-icon trophy"></i></span>
-        <span class="stat-card-value" id="card-champion" style="font-size:0.65rem;">—</span>
+        <span class="stat-card-value" id="card-champion" style="font-size:0.75rem;">—</span>
         <span class="stat-card-label" id="card-champion-label">ÚLTIMO CAMPEÓN</span>
       </div>
       <div class="stat-card blue">
         <span class="stat-card-icon"><i class="nes-icon star"></i></span>
-        <span class="stat-card-value" id="card-top-scorer" style="font-size:0.65rem;">—</span>
+        <span class="stat-card-value" id="card-top-scorer" style="font-size:0.75rem;">—</span>
         <span class="stat-card-label" id="card-top-scorer-label">TOP SCORER</span>
       </div>
       <div class="stat-card red">
@@ -226,7 +228,7 @@
     <div class="panels-container">
 
       <div class="nes-container with-title">
-        <p class="title"><i class="nes-icon trophy is-small"></i> <span id="champions-title">Campeones</span></p>
+        <p class="title"><span id="champions-title">Campeones</span></p>
         <div id="champions-loading" class="loading-text">
           <span class="nes-text is-warning">Cargando...</span>
         </div>
@@ -249,7 +251,7 @@
       </div>
 
       <div class="nes-container with-title">
-        <p class="title"><i class="nes-icon star is-small"></i> <span id="scorers-title">Top Scorers</span></p>
+        <p class="title"><span id="scorers-title">Top Scorers</span></p>
         <div id="scorers-loading" class="loading-text">
           <span class="nes-text is-warning">Cargando...</span>
         </div>
@@ -274,7 +276,7 @@
 
     <!-- Owner Stats -->
     <div class="panel-full nes-container with-title">
-      <p class="title"><i class="nes-icon coin is-small"></i> Estadísticas por Dueño</p>
+      <p class="title">Estadísticas Owners</p>
       <div id="owners-loading" class="loading-text">
         <span class="nes-text is-warning">Cargando...</span>
       </div>
