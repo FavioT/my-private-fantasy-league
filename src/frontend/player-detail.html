@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Player Dashboard</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <title>Estadísticas Jugador - Andate Silver</title>
   <!-- NES.css -->
   <link href="https://unpkg.com/nes.css@latest/css/nes.min.css" rel="stylesheet" />
   <!-- Google Font -->
@@ -11,7 +12,6 @@
   <style>
     body {
       font-family: 'Press Start 2P', cursive;
-      background-color: #f0f0f0;
       padding: 0;
       font-size: 12px;
     }
@@ -406,38 +406,11 @@
   <nav class="navbar">
     <div class="navbar-content">
       <a href="/" class="navbar-brand">
-        <i class="nes-icon trophy is-small"></i>
-        <span>Fantasy League</span>
+        <span>ESPN Fantasy Stats</span>
       </a>
       <ul class="navbar-menu">
         <li class="navbar-item">
-          <a href="/" class="navbar-link">Dashboard</a>
-        </li>
-        <li class="navbar-item dropdown">
-          <button class="dropdown-toggle" onclick="toggleDropdown('dropdown-teams')">
-            Equipos
-          </button>
-          <div id="dropdown-teams" class="dropdown-menu">
-            <a href="#" class="dropdown-item">Ver Todos</a>
-            <a href="#" class="dropdown-item">Clasificación</a>
-            <div class="dropdown-divider"></div>
-            <a href="#" class="dropdown-item">Mi Equipo</a>
-          </div>
-        </li>
-        <li class="navbar-item dropdown">
-          <button class="dropdown-toggle" onclick="toggleDropdown('dropdown-stats')">
-            Estadísticas
-          </button>
-          <div id="dropdown-stats" class="dropdown-menu">
-            <a href="#" class="dropdown-item">Líderes</a>
-            <a href="#" class="dropdown-item">Comparar Jugadores</a>
-            <div class="dropdown-divider"></div>
-            <a href="#" class="dropdown-item">Proyecciones</a>
-            <a href="#" class="dropdown-item">Tendencias</a>
-          </div>
-        </li>
-        <li class="navbar-item">
-          <a href="#" class="navbar-link">Calendario</a>
+          <button type="button" class="nes-btn is-warning" onclick="window.location.href='/'">Dashboard</button>
         </li>
       </ul>
     </div>

@@ -92,7 +92,7 @@ class HistoricalAnalytics:
             'total_losses': 0,
             'total_points': 0,
             'championships': 0,
-            'seasons_played': 0,
+            'seasons_played': set(),
             'teams': []
         })
         
@@ -127,7 +127,7 @@ class HistoricalAnalytics:
                 owner_stats[owner]['total_wins'] += team.get('wins', 0)
                 owner_stats[owner]['total_losses'] += team.get('losses', 0)
                 owner_stats[owner]['total_points'] += team.get('points_for', 0)
-                owner_stats[owner]['seasons_played'] += 1
+                owner_stats[owner]['seasons_played'].add(year)
                 
                 if owner == champion_owner:
                     owner_stats[owner]['championships'] += 1
@@ -151,8 +151,8 @@ class HistoricalAnalytics:
                 'total_losses': stats['total_losses'],
                 'win_percentage': round(win_pct, 3),
                 'total_points': round(stats['total_points'], 2),
-                'seasons_played': stats['seasons_played'],
-                'avg_points_per_season': round(stats['total_points'] / stats['seasons_played'], 2) if stats['seasons_played'] > 0 else 0,
+                'seasons_played': len(stats['seasons_played']),
+                'avg_points_per_season': round(stats['total_points'] / len(stats['seasons_played']), 2) if stats['seasons_played'] else 0,
                 'teams': stats['teams']
             })
         

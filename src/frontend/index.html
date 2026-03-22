@@ -3,27 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fantasy Dashboard</title>
-  <!-- NES.css -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <title>Andate Silver</title>
   <link href="https://unpkg.com/nes.css@latest/css/nes.min.css" rel="stylesheet" />
-  <!-- Google Font -->
   <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
   <style>
     body {
       font-family: 'Press Start 2P', cursive;
-      background-color: #f0f0f0;
       padding: 0;
       font-size: 12px;
     }
 
-    /* Navbar Styles */
+    /* Navbar */
     .navbar {
       background-color: #209cee;
       padding: 1rem 1.5rem;
       margin-bottom: 1.5rem;
       box-shadow: 4px 4px 0 #000;
     }
-
     .navbar-content {
       max-width: 1400px;
       margin: 0 auto;
@@ -33,7 +30,6 @@
       flex-wrap: wrap;
       gap: 1rem;
     }
-
     .navbar-brand {
       display: flex;
       align-items: center;
@@ -42,11 +38,7 @@
       font-size: 0.7rem;
       text-decoration: none;
     }
-
-    .navbar-brand:hover {
-      color: #f7d51d;
-    }
-
+    .navbar-brand:hover { color: #f7d51d; }
     .navbar-menu {
       display: flex;
       align-items: center;
@@ -55,11 +47,7 @@
       margin: 0;
       padding: 0;
     }
-
-    .navbar-item {
-      position: relative;
-    }
-
+    .navbar-item { position: relative; }
     .navbar-link {
       color: white;
       text-decoration: none;
@@ -67,25 +55,10 @@
       padding: 0.5rem 0.8rem;
       display: inline-block;
       border: 2px solid transparent;
-      transition: all 0.2s;
     }
-
-    .navbar-link:hover {
-      background-color: #f7d51d;
-      color: #212529;
-      border-color: #000;
-    }
-
-    .navbar-link.active {
-      background-color: white;
-      color: #209cee;
-      border-color: #000;
-    }
-
-    .dropdown {
-      position: relative;
-    }
-
+    .navbar-link:hover { background-color: #f7d51d; color: #212529; border-color: #000; }
+    .navbar-link.active { background-color: white; color: #209cee; border-color: #000; }
+    .dropdown { position: relative; }
     .dropdown-toggle {
       cursor: pointer;
       color: white;
@@ -96,18 +69,8 @@
       background: none;
       font-family: 'Press Start 2P', cursive;
     }
-
-    .dropdown-toggle:hover {
-      background-color: #f7d51d;
-      color: #212529;
-      border-color: #000;
-    }
-
-    .dropdown-toggle::after {
-      content: ' ▼';
-      font-size: 0.4rem;
-    }
-
+    .dropdown-toggle:hover { background-color: #f7d51d; color: #212529; border-color: #000; }
+    .dropdown-toggle::after { content: ' ▼'; font-size: 0.4rem; }
     .dropdown-menu {
       display: none;
       position: absolute;
@@ -121,353 +84,236 @@
       margin-top: 0.5rem;
       padding: 0.5rem 0;
     }
-
-    .dropdown-menu.show {
-      display: block;
-    }
-
+    .dropdown-menu.show { display: block; }
     .dropdown-item {
       display: block;
       padding: 0.6rem 1rem;
       color: #212529;
       text-decoration: none;
       font-size: 0.5rem;
-      transition: background-color 0.2s;
     }
+    .dropdown-item:hover { background-color: #92cc41; color: white; }
+    .dropdown-divider { height: 2px; background-color: #000; margin: 0.5rem 0; }
 
-    .dropdown-item:hover {
-      background-color: #92cc41;
-      color: white;
-    }
+    /* Layout */
+    .content-wrapper { padding: 0 1.5rem 1.5rem 1.5rem; }
+    .container-main { max-width: 1400px; margin: 0 auto; }
+    h1 { color: #209cee; text-align: center; margin-bottom: 1.5rem; font-size: 1rem; }
+    h2 { font-size: 0.75rem; }
 
-    .dropdown-divider {
-      height: 2px;
-      background-color: #000;
-      margin: 0.5rem 0;
-    }
-
-    .content-wrapper {
-      padding: 0 1.5rem 1.5rem 1.5rem;
-    }
-
-    .container-main {
-      max-width: 1400px;
-      margin: 0 auto;
-    }
-
-    h1 {
-      color: #209cee;
-      text-align: center;
-      margin-bottom: 1.5rem;
-      font-size: 1rem;
-    }
-
-    h2 {
-      font-size: 0.75rem;
-    }
-
-    .panels-container {
+    /* Year Selector */
+    .year-selector {
       display: flex;
-      gap: 1.5rem;
+      gap: 0.5rem;
       flex-wrap: wrap;
-    }
-    
-    .panel-left {
-      flex: 1;
-      min-width: 300px;
-    }
-    
-    .panel-right {
-      flex: 1;
-      min-width: 300px;
-    }
-
-    .nes-container {
-      margin-bottom: 1rem;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: separate;
-      border-spacing: 0;
-    }
-
-    thead {
-      background-color: #209cee;
-      color: white;
-    }
-
-    th, td {
-      padding: 0.4rem;
-      text-align: left;
-      font-size: 0.55rem;
-    }
-
-    th {
-      font-size: 0.5rem;
-    }
-
-    .center-text {
-      text-align: center;
-    }
-
-    .clickable-row {
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
-    
-    .clickable-row:hover {
-      background-color: #92cc41;
-    }
-    
-    .selected-row {
-      background-color: #f7d51d !important;
-    }
-
-    .player-injured {
-      color: #e76e55;
-    }
-
-    .loading-text {
-      text-align: center;
-      padding: 0.8rem;
-      font-size: 0.6rem;
-    }
-
-    .status-bar {
-      display: flex;
-      justify-content: space-between;
+      justify-content: center;
+      margin-bottom: 1.5rem;
       align-items: center;
-      margin-top: 0.8rem;
-      font-size: 0.55rem;
     }
+    .year-selector-label { font-size: 0.5rem; color: #555; margin-right: 0.5rem; }
 
-    .nes-icon {
-      transform: scale(0.8);
+    /* Summary Cards */
+    .cards-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
     }
+    .stat-card {
+      background: white;
+      border: 4px solid #000;
+      box-shadow: 4px 4px 0 #000;
+      padding: 1rem;
+      text-align: center;
+    }
+    .stat-card-icon { margin-bottom: 0.8rem; display: block; text-align: center; }
+    .stat-card-value { font-size: 1.1rem; color: #209cee; display: block; margin-bottom: 0.4rem; word-break: break-all; }
+    .stat-card-label { font-size: 0.38rem; color: #555; display: block; line-height: 1.8; }
+    .stat-card.gold  { border-color: #f7d51d; box-shadow: 4px 4px 0 #f7d51d; }
+    .stat-card.green { border-color: #92cc41; box-shadow: 4px 4px 0 #92cc41; }
+    .stat-card.red   { border-color: #e76e55; box-shadow: 4px 4px 0 #e76e55; }
+    .stat-card.blue  { border-color: #209cee; box-shadow: 4px 4px 0 #209cee; }
 
+    /* Main panels */
+    .panels-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .panel-full { margin-bottom: 1.5rem; }
+
+    table { width: 100%; border-collapse: separate; border-spacing: 0; }
+    thead { background-color: #209cee; color: white; }
+    th, td { padding: 0.4rem; text-align: left; font-size: 0.5rem; }
+    th { font-size: 0.45rem; }
+    .center-text { text-align: center; }
+    .clickable-row { cursor: pointer; transition: background-color 0.2s; }
+    .clickable-row:hover { background-color: #92cc41; color: white; }
+    .loading-text { text-align: center; padding: 1.2rem; font-size: 0.55rem; }
+    .nes-container { margin-bottom: 0; }
+
+    .rank-medal { font-size: 0.9rem; }
+
+    /* Wins bar */
     @media (max-width: 900px) {
-      body {
-        padding: 0;
-        font-size: 10px;
-      }
-
-      .navbar {
-        padding: 0.8rem;
-      }
-
-      .navbar-content {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .navbar-brand {
-        font-size: 0.6rem;
-      }
-
-      .navbar-menu {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.5rem;
-        width: 100%;
-      }
-
-      .navbar-link,
-      .dropdown-toggle {
-        font-size: 0.5rem;
-        padding: 0.4rem 0.6rem;
-      }
-
-      .dropdown-menu {
-        position: static;
-        box-shadow: none;
-        margin-top: 0.3rem;
-      }
-
-      .content-wrapper {
-        padding: 0.5rem;
-      }
-
-      h1 {
-        font-size: 0.75rem;
-        margin-bottom: 1rem;
-      }
-
-      h2 {
-        font-size: 0.6rem;
-      }
-      
-      .panels-container {
-        flex-direction: column;
-        gap: 1rem;
-      }
-
-      .panel-left,
-      .panel-right {
-        min-width: 100%;
-      }
-
-      th, td {
-        font-size: 0.45rem;
-        padding: 0.25rem;
-      }
-
-      th {
-        font-size: 0.4rem;
-      }
-
-      .loading-text {
-        font-size: 0.5rem;
-        padding: 0.5rem;
-      }
-
-      .status-bar {
-        font-size: 0.45rem;
-        margin-top: 0.5rem;
-      }
-
-      .nes-icon {
-        transform: scale(0.6);
-      }
+      .cards-row { grid-template-columns: repeat(2, 1fr); }
+      .panels-container { grid-template-columns: 1fr; }
+      .navbar-content { flex-direction: column; align-items: flex-start; }
+      .navbar-menu { flex-direction: column; align-items: flex-start; gap: 0.5rem; width: 100%; }
+      .navbar-link, .dropdown-toggle { font-size: 0.5rem; padding: 0.4rem 0.6rem; }
+      .dropdown-menu { position: static; box-shadow: none; margin-top: 0.3rem; }
+      .content-wrapper { padding: 0.5rem; }
+      h1 { font-size: 0.75rem; }
+      .stat-card-value { font-size: 0.85rem; }
     }
   </style>
 </head>
 <body>
+
   <!-- Navbar -->
   <nav class="navbar">
     <div class="navbar-content">
       <a href="/" class="navbar-brand">
-        <i class="nes-icon trophy is-small"></i>
-        <span>Fantasy League</span>
+        <span>ESPN Fantasy Stats</span>
       </a>
       <ul class="navbar-menu">
         <li class="navbar-item">
-          <a href="/" class="navbar-link active">Dashboard</a>
-        </li>
-        <li class="navbar-item dropdown">
-          <button class="dropdown-toggle" onclick="toggleDropdown('dropdown-teams')">
-            Equipos
-          </button>
-          <div id="dropdown-teams" class="dropdown-menu">
-            <a href="#" class="dropdown-item">Ver Todos</a>
-            <a href="#" class="dropdown-item">Clasificación</a>
-            <div class="dropdown-divider"></div>
-            <a href="#" class="dropdown-item">Mi Equipo</a>
-          </div>
-        </li>
-        <li class="navbar-item dropdown">
-          <button class="dropdown-toggle" onclick="toggleDropdown('dropdown-stats')">
-            Estadísticas
-          </button>
-          <div id="dropdown-stats" class="dropdown-menu">
-            <a href="/history.html" class="dropdown-item">📊 Historial Multi-Año</a>
-            <div class="dropdown-divider"></div>
-            <a href="#" class="dropdown-item">Líderes</a>
-            <a href="#" class="dropdown-item">Comparar Jugadores</a>
-            <div class="dropdown-divider"></div>
-            <a href="#" class="dropdown-item">Proyecciones</a>
-            <a href="#" class="dropdown-item">Tendencias</a>
-          </div>
-        </li>
-        <li class="navbar-item">
-          <a href="#" class="navbar-link">Calendario</a>
+          <button type="button" class="nes-btn is-warning" onclick="window.location.href='/'">Dashboard</button>
         </li>
       </ul>
     </div>
   </nav>
 
   <div class="container-main content-wrapper">
-    <h1>
-      <i class="nes-logo"></i>
-      Fantasy Basketball Dashboard
-    </h1>
+    <!-- Year Selector -->
+    <div class="year-selector">
+      <span class="year-selector-label">TEMPORADA:</span>
+      <button type="button" class="nes-btn is-warning active" data-year="all"  onclick="selectYear('all')">TODAS</button>
+      <button type="button" class="nes-btn is-primary"        data-year="2020" onclick="selectYear('2020')">2020</button>
+      <button type="button" class="nes-btn is-primary"        data-year="2021" onclick="selectYear('2021')">2021</button>
+      <button type="button" class="nes-btn is-primary"        data-year="2022" onclick="selectYear('2022')">2022</button>
+      <button type="button" class="nes-btn is-primary"        data-year="2023" onclick="selectYear('2023')">2023</button>
+      <button type="button" class="nes-btn is-primary"        data-year="2024" onclick="selectYear('2024')">2024</button>
+      <button type="button" class="nes-btn is-primary"        data-year="2025" onclick="selectYear('2025')">2025</button>
+    </div>
 
+    <!-- Summary Cards -->
+    <div class="cards-row">
+      <div class="stat-card gold">
+        <span class="stat-card-icon"><i class="nes-icon coin"></i></span>
+        <span class="stat-card-value" id="card-seasons">—</span>
+        <span class="stat-card-label">TEMPORADAS<br>REGISTRADAS</span>
+      </div>
+      <div class="stat-card green">
+        <span class="stat-card-icon"><i class="nes-icon trophy"></i></span>
+        <span class="stat-card-value" id="card-champion" style="font-size:0.65rem;">—</span>
+        <span class="stat-card-label" id="card-champion-label">ÚLTIMO CAMPEÓN</span>
+      </div>
+      <div class="stat-card blue">
+        <span class="stat-card-icon"><i class="nes-icon star"></i></span>
+        <span class="stat-card-value" id="card-top-scorer" style="font-size:0.65rem;">—</span>
+        <span class="stat-card-label" id="card-top-scorer-label">TOP SCORER</span>
+      </div>
+      <div class="stat-card red">
+        <span class="stat-card-icon"><i class="nes-icon like"></i></span>
+        <span class="stat-card-value" id="card-teams">—</span>
+        <span class="stat-card-label" id="card-teams-label">DUEÑOS<br>DISTINTOS</span>
+      </div>
+    </div>
+
+    <!-- Champions + Top Scorers -->
     <div class="panels-container">
-      <!-- Panel izquierdo: Equipos -->
-      <div class="panel-left">
-        <div class="nes-container with-title">
-          <p class="title"><i class="nes-icon star is-small"></i> Equipos</p>
-          
-          <div id="teams-loading" class="loading-text">
-            <span class="nes-text is-warning">Cargando equipos...</span>
-          </div>
 
-          <div class="nes-table-responsive" id="teams-container" style="display: none;">
+      <div class="nes-container with-title">
+        <p class="title"><i class="nes-icon trophy is-small"></i> <span id="champions-title">Campeones</span></p>
+        <div id="champions-loading" class="loading-text">
+          <span class="nes-text is-warning">Cargando...</span>
+        </div>
+        <div id="champions-content" style="display:none;">
+          <div class="nes-table-responsive">
+            <table class="nes-table is-bordered">
+              <thead>
+                <tr>
+                  <th class="center-text">AÑO</th>
+                  <th>EQUIPO</th>
+                  <th>DUEÑO</th>
+                  <th class="center-text">W</th>
+                  <th class="center-text">L</th>
+                </tr>
+              </thead>
+              <tbody id="champions-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="nes-container with-title">
+        <p class="title"><i class="nes-icon star is-small"></i> <span id="scorers-title">Top Scorers</span></p>
+        <div id="scorers-loading" class="loading-text">
+          <span class="nes-text is-warning">Cargando...</span>
+        </div>
+        <div id="scorers-content" style="display:none;">
+          <div class="nes-table-responsive">
             <table class="nes-table is-bordered">
               <thead>
                 <tr>
                   <th class="center-text">#</th>
-                  <th>Equipo</th>
-                  <th class="center-text">W</th>
-                  <th class="center-text">L</th>
-                  <th class="center-text">%</th>
+                  <th>JUGADOR</th>
+                  <th class="center-text">PROM PTS</th>
+                  <th class="center-text" id="scorers-year-col">EQUIPO/AÑO</th>
                 </tr>
               </thead>
-              <tbody id="teams">
-              </tbody>
+              <tbody id="scorers-body"></tbody>
             </table>
           </div>
-
         </div>
       </div>
 
-      <!-- Panel derecho: Jugadores -->
-      <div class="panel-right">
-        <div class="nes-container with-title">
-          <p class="title"><i class="nes-icon coin is-small"></i> <span id="players-header">Jugadores</span></p>
-          
-          <div id="players-empty" class="loading-text">
-            <span class="nes-text is-primary">▶ Selecciona un equipo</span>
-          </div>
+    </div>
 
-          <div id="players-loading" class="loading-text" style="display: none;">
-            <span class="nes-text is-warning">Cargando jugadores...</span>
-          </div>
-
-          <div class="nes-table-responsive" id="players-container" style="display: none;">
-            <table class="nes-table is-bordered">
-              <thead>
-                <tr>
-                  <th>Jugador</th>
-                  <th class="center-text">Pos</th>
-                  <th class="center-text">Team</th>
-                  <th class="center-text">Estado</th>
-                </tr>
-              </thead>
-              <tbody id="players">
-              </tbody>
-            </table>
-          </div>
+    <!-- Owner Stats -->
+    <div class="panel-full nes-container with-title">
+      <p class="title"><i class="nes-icon coin is-small"></i> Estadísticas por Dueño</p>
+      <div id="owners-loading" class="loading-text">
+        <span class="nes-text is-warning">Cargando...</span>
+      </div>
+      <div id="owners-content" style="display:none;">
+        <div class="nes-table-responsive">
+          <table class="nes-table is-bordered">
+            <thead>
+              <tr>
+                <th class="center-text">#</th>
+                <th>DUEÑO</th>
+                <th class="center-text">🏆</th>
+                <th class="center-text">W</th>
+                <th class="center-text">L</th>
+                <th class="center-text">%</th>
+                <th class="center-text">TEMPORADAS</th>
+              </tr>
+            </thead>
+            <tbody id="owners-body"></tbody>
+          </table>
         </div>
       </div>
     </div>
+
   </div>
 
   <script>
-    // Dropdown functionality
     function toggleDropdown(id) {
       const dropdown = document.getElementById(id);
-      const allDropdowns = document.querySelectorAll('.dropdown-menu');
-      
-      // Close all other dropdowns
-      allDropdowns.forEach(dd => {
-        if (dd.id !== id) {
-          dd.classList.remove('show');
-        }
+      document.querySelectorAll('.dropdown-menu').forEach(dd => {
+        if (dd.id !== id) dd.classList.remove('show');
       });
-      
-      // Toggle current dropdown
       dropdown.classList.toggle('show');
     }
-
-    // Close dropdowns when clicking outside
     document.addEventListener('click', function(event) {
       if (!event.target.matches('.dropdown-toggle')) {
-        const dropdowns = document.querySelectorAll('.dropdown-menu');
-        dropdowns.forEach(dd => dd.classList.remove('show'));
+        document.querySelectorAll('.dropdown-menu').forEach(dd => dd.classList.remove('show'));
       }
     });
   </script>
-  <script src="js/main.js?v=3"></script>
+  <script src="js/main.js?v=4"></script>
 </body>
 </html>

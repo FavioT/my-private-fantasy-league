@@ -1,154 +1,401 @@
-interface Team {
-  id: number;
-  name: string;
-  wins: number;
-  losses: number;
+// ============================================================
+// Dashboard principal – datos históricos 2020-2025
+// ============================================================
+
+const API = "http://localhost:5000";
+
+// Estado de la vista
+let currentYear: string = "all";
+
+// ============================================================
+// Utilidades UI
+// ============================================================
+
+function showLoading(sectionId: string) {
+  const loading = document.getElementById(`${sectionId}-loading`);
+  const content = document.getElementById(`${sectionId}-content`);
+  if (loading) loading.style.display = "block";
+  if (content) content.style.display = "none";
 }
 
-interface Player {
-  playerId: number;
-  name: string;
-  position: string;
-  team: string;
-  injured: boolean;
-  injuryStatus: string | null;
+function showContent(sectionId: string) {
+  const loading = document.getElementById(`${sectionId}-loading`);
+  const content = document.getElementById(`${sectionId}-content`);
+  if (loading) loading.style.display = "none";
+  if (content) content.style.display = "block";
 }
 
-interface TeamPlayersResponse {
-  teamName: string;
-  players: Player[];
+function showError(sectionId: string, msg: string) {
+  const loading = document.getElementById(`${sectionId}-loading`);
+  if (loading) loading.innerHTML = `<span class="nes-text is-error">✖ ${msg}</span>`;
 }
 
-let selectedTeamId: number | null = null;
+function rankMedal(i: number): string {
+  if (i === 0) return "🥇";
+  if (i === 1) return "🥈";
+  if (i === 2) return "🥉";
+  return `${i + 1}`;
+}
 
-async function loadTeams() {
-  const tbody = document.getElementById("teams")!;
-  const loading = document.getElementById("teams-loading")!;
-  const container = document.getElementById("teams-container")!;
-  const status = document.getElementById("status")!;
+// ============================================================
+// Selector de año
+// ============================================================
+
+(window as any).selectYear = function(year: string) {
+  currentYear = year;
+
+  // Actualizar botones
+  document.querySelectorAll<HTMLButtonElement>(".year-btn").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.year === year);
+  });
+
+  loadAll();
+};
+
+// ============================================================
+// Carga principal – orquesta todo según el año seleccionado
+// ============================================================
+
+async function loadAll() {
+  if (currentYear === "all") {
+    await Promise.all([
+      loadAllYearsChampions(),
+      loadAllYearsTopScorers(),
+      loadAllYearsOwnerStats(),
+    ]);
+  } else {
+    const yr = parseInt(currentYear);
+    await Promise.all([
+      loadSeasonStandings(yr),
+      loadSeasonTopScorers(yr),
+      loadSeasonOwnerStats(yr),
+    ]);
+  }
+}
+
+// ============================================================
+// VISTA MULTI-AÑO
+// ============================================================
+
+async function loadAllYearsChampions() {
+  showLoading("champions");
+  const title = document.getElementById("champions-title")!;
+  title.textContent = "Campeones por Temporada";
 
   try {
-    const res = await fetch("http://localhost:5000/teams");
-    const data: Team[] = await res.json();
+    const res = await fetch(`${API}/api/analytics/champions`);
+    const data: ChampionEntry[] = await res.json();
 
-    // Ordenar equipos por victorias (descendente)
-    data.sort((a, b) => b.wins - a.wins);
+    // Summary cards
+    const cardSeasons = document.getElementById("card-seasons")!;
+    const cardChampion = document.getElementById("card-champion")!;
+    const cardChampionLabel = document.getElementById("card-champion-label")!;
+    cardSeasons.textContent = String(data.length);
 
-    // Ocultar loading, mostrar tabla
-    loading.style.display = "none";
-    container.style.display = "block";
+    if (data.length > 0) {
+      const last = data[data.length - 1];
+      cardChampion.textContent = last.team_name;
+      cardChampionLabel.textContent = `CAMPEÓN ${last.year}`;
+    }
 
-    data.forEach((team, index) => {
+    const tbody = document.getElementById("champions-body")!;
+    tbody.innerHTML = "";
+    [...data].reverse().forEach(entry => {
       const tr = document.createElement("tr");
-      tr.className = "clickable-row";
-      tr.dataset.teamId = team.id.toString();
-      
-      const position = index + 1;
-      const winPercentage = ((team.wins / (team.wins + team.losses)) * 100).toFixed(1);
-      
       tr.innerHTML = `
-        <td class="center-text">${position}</td>
-        <td>${team.name}</td>
-        <td class="center-text nes-text is-success">${team.wins}</td>
-        <td class="center-text nes-text is-error">${team.losses}</td>
-        <td class="center-text">${winPercentage}%</td>
+        <td class="center-text"><span style="background:#f7d51d;padding:2px 5px;border:2px solid #000;font-size:0.45rem;">${entry.year}</span></td>
+        <td>${entry.team_name}</td>
+        <td>${entry.owner || "—"}</td>
+        <td class="center-text nes-text is-success">${entry.wins}</td>
+        <td class="center-text nes-text is-error">${entry.losses}</td>
       `;
-      
-      // Agregar evento de click
-      tr.addEventListener("click", () => loadTeamPlayers(team.id, tr));
-      
       tbody.appendChild(tr);
     });
 
-    status.className = "nes-text is-success";
-    status.textContent = "● ONLINE";
-  } catch (error) {
-    loading.innerHTML = '<span class="nes-text is-error">✖ Error al cargar equipos</span>';
-    status.className = "nes-text is-error";
-    status.textContent = "● ERROR";
-    console.error("Error loading teams:", error);
+    showContent("champions");
+  } catch (e) {
+    showError("champions", "Error al cargar campeones");
   }
 }
 
-async function loadTeamPlayers(teamId: number, rowElement: HTMLElement) {
-  const playersEmpty = document.getElementById("players-empty")!;
-  const playersLoading = document.getElementById("players-loading")!;
-  const playersContainer = document.getElementById("players-container")!;
-  const playersBody = document.getElementById("players")!;
-  const playersHeader = document.getElementById("players-header")!;
-  const status = document.getElementById("status")!;
-
-  // Remover selección anterior
-  document.querySelectorAll(".selected-row").forEach(el => {
-    el.classList.remove("selected-row");
-  });
-
-  // Marcar fila actual como seleccionada
-  rowElement.classList.add("selected-row");
-  selectedTeamId = teamId;
-
-  // Mostrar loading
-  playersEmpty.style.display = "none";
-  playersContainer.style.display = "none";
-  playersLoading.style.display = "block";
+async function loadAllYearsTopScorers() {
+  showLoading("scorers");
+  const title = document.getElementById("scorers-title")!;
+  title.textContent = "Top Scorers Histórico";
+  const col = document.getElementById("scorers-year-col")!;
+  col.textContent = "AÑO";
 
   try {
-    const res = await fetch(`http://localhost:5000/teams/${teamId}/players`);
-    const data: TeamPlayersResponse = await res.json();
+    const res = await fetch(`${API}/api/analytics/top-scorers?limit=12`);
+    const data: TopScorerEntry[] = await res.json();
 
-    // Actualizar header con nombre del equipo
-    playersHeader.textContent = data.teamName;
+    // Summary card – top scorer
+    if (data.length > 0) {
+      document.getElementById("card-top-scorer")!.textContent = data[0].name;
+      document.getElementById("card-top-scorer-label")!.textContent =
+        `TOP SCORER (${data[0].avg_points.toFixed(1)} pts/sem)`;
+    }
 
-    // Limpiar tabla anterior
-    playersBody.innerHTML = "";
-
-    // Agregar jugadores
-    data.players.forEach((player) => {
+    const tbody = document.getElementById("scorers-body")!;
+    tbody.innerHTML = "";
+    data.forEach((player, i) => {
       const tr = document.createElement("tr");
-      tr.style.cursor = "pointer";
-      tr.className = "player-row-clickable";
-      
-      const statusText = player.injured 
-        ? `<span class="player-injured">⚠ ${player.injuryStatus || "Lesionado"}</span>`
-        : '<span class="nes-text is-success">✓</span>';
-      
-      const nameClass = player.injured ? "player-injured" : "";
-      
       tr.innerHTML = `
-        <td class="${nameClass}">${player.name}</td>
-        <td class="center-text">${player.position}</td>
-        <td class="center-text">${player.team}</td>
-        <td class="center-text">${statusText}</td>
+        <td class="center-text">${rankMedal(i)}</td>
+        <td>${player.name}<br><span style="font-size:0.38rem;color:#888;">${player.proTeam || ""}</span></td>
+        <td class="center-text nes-text is-primary">${player.avg_points.toFixed(1)}</td>
+        <td class="center-text" style="font-size:0.42rem;">${player.year}</td>
       `;
-      
-      // Hacer que la fila sea clickable
-      tr.addEventListener("click", () => {
-        const url = `/player-detail.html?id=${player.playerId}`;
-        window.location.href = url;
-      });
-      
-      // Efecto hover
-      tr.addEventListener("mouseenter", () => {
-        tr.style.backgroundColor = "rgba(146, 204, 65, 0.2)";
-      });
-      
-      tr.addEventListener("mouseleave", () => {
-        tr.style.backgroundColor = "";
-      });
-      
-      playersBody.appendChild(tr);
+      tbody.appendChild(tr);
     });
 
-    // Mostrar tabla
-    playersLoading.style.display = "none";
-    playersContainer.style.display = "block";
-
-  } catch (error) {
-    playersLoading.innerHTML = '<span class="nes-text is-error">✖ Error al cargar jugadores</span>';
-    status.className = "nes-text is-error";
-    status.textContent = "● ERROR";
-    console.error("Error loading players:", error);
+    showContent("scorers");
+  } catch (e) {
+    showError("scorers", "Error al cargar top scorers");
   }
 }
 
-loadTeams();
+async function loadAllYearsOwnerStats() {
+  showLoading("owners");
+
+  try {
+    const res = await fetch(`${API}/api/analytics/owner-stats`);
+    const data: OwnerStat[] = await res.json();
+
+    // Card – dueños distintos
+    document.getElementById("card-teams")!.textContent = String(data.length);
+    document.getElementById("card-teams-label")!.textContent = "DUEÑOS\nDISTINTOS";
+
+    const maxWins = Math.max(...data.map(o => o.total_wins), 1);
+
+    const tbody = document.getElementById("owners-body")!;
+    tbody.innerHTML = "";
+    data.forEach((owner, i) => {
+      const pct = (owner.win_percentage * 100).toFixed(1);
+      const fillW = Math.round((owner.total_wins / maxWins) * 100);
+      const champs = owner.championships > 0
+        ? `<span class="nes-text is-warning">${"🏆".repeat(owner.championships)}</span>`
+        : "—";
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td class="center-text">${rankMedal(i)}</td>
+        <td>${owner.owner}</td>
+        <td class="center-text">${champs}</td>
+        <td class="center-text nes-text is-success">${owner.total_wins}</td>
+        <td class="center-text nes-text is-error">${owner.total_losses}</td>
+        <td class="center-text">${pct}%</td>
+        <td class="center-text">${owner.seasons_played}</td>
+        <td>
+          <div class="wins-bar-bg">
+            <div class="wins-bar-fill" style="width:${fillW}%"></div>
+          </div>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    showContent("owners");
+  } catch (e) {
+    showError("owners", "Error al cargar estadísticas de dueños");
+  }
+}
+
+// ============================================================
+// VISTA AÑO ESPECÍFICO
+// ============================================================
+
+async function loadSeasonStandings(year: number) {
+  showLoading("champions");
+  const title = document.getElementById("champions-title")!;
+  title.textContent = `Clasificación ${year}`;
+
+  try {
+    const [summaryRes, dataRes] = await Promise.all([
+      fetch(`${API}/api/analytics/season/${year}/summary`),
+      fetch(`${API}/api/analytics/season/${year}`),
+    ]);
+    const summary: SeasonSummary = await summaryRes.json();
+    const seasonData: SeasonData = await dataRes.json();
+
+    // Cards
+    document.getElementById("card-seasons")!.textContent = String(year);
+    document.getElementById("card-champion")!.textContent = summary.champion?.team || "—";
+    document.getElementById("card-champion-label")!.textContent = `CAMPEÓN ${year}`;
+    document.getElementById("card-teams")!.textContent = String(summary.total_teams);
+    document.getElementById("card-teams-label")!.textContent = "EQUIPOS";
+
+    // Tabla de clasificación
+    const teams = [...(seasonData.teams || [])].sort((a, b) => b.wins - a.wins);
+    const champion = summary.champion?.team || "";
+
+    const tbody = document.getElementById("champions-body")!;
+    tbody.innerHTML = "";
+    teams.forEach((team, i) => {
+      const pct = ((team.wins / (team.wins + team.losses)) * 100).toFixed(1);
+      const isChamp = team.team_name === champion;
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td class="center-text">${isChamp ? "🏆" : rankMedal(i)}</td>
+        <td>${team.team_name}${isChamp ? ' <span style="font-size:0.38rem;background:#f7d51d;padding:1px 4px;border:2px solid #000;">CAMPEÓN</span>' : ""}</td>
+        <td>${team.owner || "—"}</td>
+        <td class="center-text nes-text is-success">${team.wins}</td>
+        <td class="center-text nes-text is-error">${team.losses}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    // Ajustar cabecera de tabla para que diga "equipo"
+    const header = document.querySelector("#champions-content thead tr");
+    if (header) {
+      header.innerHTML = `
+        <th class="center-text">#</th>
+        <th>EQUIPO</th>
+        <th>DUEÑO</th>
+        <th class="center-text">W</th>
+        <th class="center-text">L</th>
+      `;
+    }
+
+    showContent("champions");
+  } catch (e) {
+    showError("champions", "Error al cargar clasificación");
+  }
+}
+
+async function loadSeasonTopScorers(year: number) {
+  showLoading("scorers");
+  const title = document.getElementById("scorers-title")!;
+  title.textContent = `Top Scorers ${year}`;
+  const col = document.getElementById("scorers-year-col")!;
+  col.textContent = "EQUIPO";
+
+  try {
+    const res = await fetch(`${API}/api/analytics/season/${year}/top-scorers?limit=12`);
+    const data: TopScorerEntry[] = await res.json();
+
+    if (data.length > 0) {
+      document.getElementById("card-top-scorer")!.textContent = data[0].name;
+      document.getElementById("card-top-scorer-label")!.textContent =
+        `TOP SCORER ${year} (${data[0].avg_points.toFixed(1)} pts)`;
+    }
+
+    const tbody = document.getElementById("scorers-body")!;
+    tbody.innerHTML = "";
+    data.forEach((player, i) => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td class="center-text">${rankMedal(i)}</td>
+        <td>${player.name}<br><span style="font-size:0.38rem;color:#888;">${player.proTeam || ""}</span></td>
+        <td class="center-text nes-text is-primary">${player.avg_points.toFixed(1)}</td>
+        <td class="center-text" style="font-size:0.42rem;">${player.team || "—"}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    showContent("scorers");
+  } catch (e) {
+    showError("scorers", "Error al cargar top scorers");
+  }
+}
+
+async function loadSeasonOwnerStats(year: number) {
+  showLoading("owners");
+
+  try {
+    const res = await fetch(`${API}/api/analytics/season/${year}`);
+    const data: SeasonData = await res.json();
+
+    const teams = [...(data.teams || [])].sort((a, b) => b.wins - a.wins);
+    const maxWins = Math.max(...teams.map(t => t.wins), 1);
+
+    const tbody = document.getElementById("owners-body")!;
+    tbody.innerHTML = "";
+    teams.forEach((team, i) => {
+      const pct = ((team.wins / (team.wins + team.losses)) * 100).toFixed(1);
+      const fillW = Math.round((team.wins / maxWins) * 100);
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td class="center-text">${rankMedal(i)}</td>
+        <td>${team.owner || "—"}</td>
+        <td class="center-text">—</td>
+        <td class="center-text nes-text is-success">${team.wins}</td>
+        <td class="center-text nes-text is-error">${team.losses}</td>
+        <td class="center-text">${pct}%</td>
+        <td class="center-text">1</td>
+        <td>
+          <div class="wins-bar-bg">
+            <div class="wins-bar-fill" style="width:${fillW}%"></div>
+          </div>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    showContent("owners");
+  } catch (e) {
+    showError("owners", "Error al cargar datos de la temporada");
+  }
+}
+
+// ============================================================
+// Interfaces de tipos
+// ============================================================
+
+interface ChampionEntry {
+  year: number;
+  team_name: string;
+  owner: string;
+  wins: number;
+  losses: number;
+  points_for: number;
+}
+
+interface TopScorerEntry {
+  name: string;
+  year: number;
+  team: string;
+  owner: string;
+  avg_points: number;
+  total_points: number;
+  position: string;
+  proTeam: string;
+}
+
+interface OwnerStat {
+  owner: string;
+  championships: number;
+  total_wins: number;
+  total_losses: number;
+  win_percentage: number;
+  total_points: number;
+  seasons_played: number;
+  avg_points_per_season: number;
+}
+
+interface SeasonSummary {
+  year: number;
+  total_teams: number;
+  champion: { team: string; owner: string; record: string };
+  top_scorer: { name: string; avg_points: number; team: string } | null;
+}
+
+interface SeasonTeam {
+  team_id: number;
+  team_name: string;
+  owner: string;
+  wins: number;
+  losses: number;
+  points_for: number;
+}
+
+interface SeasonData {
+  year: number;
+  teams: SeasonTeam[];
+}
+
+// ============================================================
+// Inicialización
+// ============================================================
+
+loadAll();
