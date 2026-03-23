@@ -162,8 +162,11 @@ async function loadAllYearsOwnerStats() {
     const res = await fetch(`${API}/api/analytics/owner-stats`);
     const data = await res.json();
 
-    document.getElementById("card-teams").textContent = String(data.length);
-    document.getElementById("card-teams-label").textContent = "DUEÑOS\nDISTINTOS";
+    const topWinner = data.reduce((best, o) => o.total_wins > best.total_wins ? o : best, data[0]);
+    const cardTeams = document.getElementById("card-teams");
+    cardTeams.textContent = topWinner.owner;
+    cardTeams.style.fontSize = "0.65rem";
+    document.getElementById("card-teams-label").textContent = `MÁS VICTORIAS (${topWinner.total_wins} W)`;
 
     const tbody = document.getElementById("owners-body");
     tbody.innerHTML = "";
