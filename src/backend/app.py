@@ -44,18 +44,21 @@ def get_league():
         swid=SWID
     )
 
+# Directorio del frontend con ruta absoluta (necesario para Vercel)
+FRONTEND_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'frontend'))
+
 # Rutas para servir archivos estáticos
 @app.route('/')
 def index():
-    return send_from_directory('../frontend', 'index.html')
+    return send_from_directory(FRONTEND_DIR, 'index.html')
 
 @app.route('/player-detail.html')
 def player_detail_page():
-    return send_from_directory('../frontend', 'player-detail.html')
+    return send_from_directory(FRONTEND_DIR, 'player-detail.html')
 
 @app.route('/<path:filename>')
 def serve_static(filename):
-    return send_from_directory('../frontend', filename)
+    return send_from_directory(FRONTEND_DIR, filename)
 
 @app.route("/teams")
 def get_teams():

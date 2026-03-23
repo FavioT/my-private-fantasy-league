@@ -1,5 +1,5 @@
 // Configuración de la API
-const API_BASE = 'http://localhost:5000';
+const API_BASE = '';
 
 // Estado global
 let currentTab = 'champions';
@@ -94,7 +94,7 @@ async function loadChampions() {
     champions.forEach(champ => {
       html += `
         <li class="champion-item">
-          <span class="champion-year">🏆 ${champ.year}</span>
+          <span class="champion-year"><i class="nes-icon trophy is-small"></i> ${champ.year}</span>
           <div class="champion-info">
             <div><strong>${champ.team_name}</strong></div>
             <div style="font-size: 0.45rem; color: #666;">${champ.owner}</div>
@@ -162,7 +162,7 @@ async function loadOwnerStats() {
           <tr>
             <th>#</th>
             <th>Dueño</th>
-            <th>🏆</th>
+            <th><i class="nes-icon trophy is-small"></i></th>
             <th>Temporadas</th>
             <th>Victorias</th>
             <th>Derrotas</th>
@@ -179,7 +179,7 @@ async function loadOwnerStats() {
         <tr>
           <td><span class="rank-badge ${rankClass}">${index + 1}</span></td>
           <td><strong>${owner.owner}</strong></td>
-          <td class="trophy-icon">${owner.championships > 0 ? '🏆'.repeat(owner.championships) : '-'}</td>
+          <td class="trophy-icon">${owner.championships > 0 ? '<i class="nes-icon trophy is-small"></i>'.repeat(owner.championships) : '-'}</td>
           <td>${owner.seasons_played}</td>
           <td style="color: #92cc41; font-weight: bold;">${owner.total_wins}</td>
           <td style="color: #e76e55;">${owner.total_losses}</td>

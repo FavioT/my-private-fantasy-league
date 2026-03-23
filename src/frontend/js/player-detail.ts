@@ -74,7 +74,7 @@ async function loadPlayerDetails() {
   }
 
   try {
-    const res = await fetch(`http://localhost:5000/players/${playerId}`);
+    const res = await fetch(`/players/${playerId}`);
     
     if (!res.ok) {
       if (res.status === 404) {

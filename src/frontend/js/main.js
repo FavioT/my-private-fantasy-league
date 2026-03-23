@@ -2,7 +2,7 @@
 // Dashboard principal – datos históricos 2020-2025
 // ============================================================
 
-const API = "http://localhost:5000";
+const API = "";
 
 let currentYear = "all";
 
@@ -133,7 +133,7 @@ async function loadAllYearsTopScorers() {
     if (data.length > 0) {
       document.getElementById("card-top-scorer").textContent = data[0].name;
       document.getElementById("card-top-scorer-label").textContent =
-        `TOP SCORER (${data[0].avg_points.toFixed(1)} pts/sem)`;
+        `TOP SCORER (${data[0].avg_points.toFixed(1)} pts)`;
     }
 
     const tbody = document.getElementById("scorers-body");
@@ -170,7 +170,7 @@ async function loadAllYearsOwnerStats() {
     data.forEach((owner, i) => {
       const pct = (owner.win_percentage * 100).toFixed(1);
       const champs = owner.championships > 0
-        ? `<span class="nes-text is-warning">${"🏆".repeat(owner.championships)}</span>`
+        ? `<span class="nes-text is-warning">${'<i class="nes-icon trophy is-small"></i>'.repeat(owner.championships)}</span>`
         : "—";
 
       const tr = document.createElement("tr");
@@ -235,7 +235,7 @@ async function loadSeasonStandings(year) {
       const isChamp = team.team_name === champion;
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td class="center-text">${isChamp ? "🏆" : rankMedal(i)}</td>
+        <td class="center-text">${isChamp ? '<i class="nes-icon trophy is-small"></i>' : rankMedal(i)}</td>
         <td>${team.team_name}${isChamp ? ' <span style="font-size:0.38rem;background:#f7d51d;padding:1px 4px;border:2px solid #000;">CAMPEÓN</span>' : ""}</td>
         <td>${team.owner || "—"}</td>
         <td class="center-text nes-text is-success">${team.wins}</td>
