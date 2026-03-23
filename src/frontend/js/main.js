@@ -30,9 +30,9 @@ function showError(sectionId, msg) {
 }
 
 function rankMedal(i) {
-  if (i === 0) return "🥇";
-  if (i === 1) return "🥈";
-  if (i === 2) return "🥉";
+  if (i === 0) return `<span style="background:#f7d51d;padding:2px 5px;border:2px solid #000;font-size:0.45rem;">1</span>`;
+  if (i === 1) return `<span style="background:#c0c0c0;padding:2px 5px;border:2px solid #000;font-size:0.45rem;">2</span>`;
+  if (i === 2) return `<span style="background:#cd7f32;padding:2px 5px;border:2px solid #000;font-size:0.45rem;">3</span>`;
   return `${i + 1}`;
 }
 
@@ -124,7 +124,7 @@ async function loadAllYearsChampions() {
 async function loadAllYearsTopScorers() {
   showLoading("scorers");
   document.getElementById("scorers-title").textContent = "Top Scorers";
-  document.getElementById("scorers-year-col").textContent = "AÑO";
+  document.getElementById("scorers-year-col").textContent = "TEMP.";
 
   try {
     const res = await fetch(`${API}/api/analytics/top-scorers?limit=12`);
@@ -133,7 +133,7 @@ async function loadAllYearsTopScorers() {
     if (data.length > 0) {
       document.getElementById("card-top-scorer").textContent = data[0].name;
       document.getElementById("card-top-scorer-label").textContent =
-        `TOP SCORER (${data[0].avg_points.toFixed(1)} pts)`;
+        `TOP SCORER (${data[0].total_points.toFixed(1)} pts tot.)`;
     }
 
     const tbody = document.getElementById("scorers-body");
@@ -143,8 +143,8 @@ async function loadAllYearsTopScorers() {
       tr.innerHTML = `
         <td class="center-text">${rankMedal(i)}</td>
         <td>${player.name}<br><span style="font-size:0.38rem;color:#888;">${player.proTeam || ""}</span></td>
-        <td class="center-text nes-text is-primary">${player.avg_points.toFixed(1)}</td>
-        <td class="center-text" style="font-size:0.42rem;">${player.year}</td>
+        <td class="center-text nes-text is-primary">${player.total_points.toFixed(1)}</td>
+        <td class="center-text" style="font-size:0.42rem;">${player.seasons ?? ""}</td>
       `;
       tbody.appendChild(tr);
     });
@@ -265,7 +265,7 @@ async function loadSeasonTopScorers(year) {
     if (data.length > 0) {
       document.getElementById("card-top-scorer").textContent = data[0].name;
       document.getElementById("card-top-scorer-label").textContent =
-        `TOP SCORER ${year} (${data[0].avg_points.toFixed(1)} pts)`;
+        `TOP SCORER ${year} (${data[0].total_points.toFixed(1)} pts tot.)`;
     }
 
     const tbody = document.getElementById("scorers-body");
@@ -275,7 +275,7 @@ async function loadSeasonTopScorers(year) {
       tr.innerHTML = `
         <td class="center-text">${rankMedal(i)}</td>
         <td>${player.name}<br><span style="font-size:0.38rem;color:#888;">${player.proTeam || ""}</span></td>
-        <td class="center-text nes-text is-primary">${player.avg_points.toFixed(1)}</td>
+        <td class="center-text nes-text is-primary">${player.total_points.toFixed(1)}</td>
         <td class="center-text" style="font-size:0.42rem;">${player.team || "—"}</td>
       `;
       tbody.appendChild(tr);

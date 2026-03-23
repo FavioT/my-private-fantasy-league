@@ -235,36 +235,54 @@ class HistoricalAnalytics:
                     'proTeam': player.get('proTeam', '')
                 })
         
-        # Ordenar por puntos promedio
-        return sorted(all_players, key=lambda x: x['avg_points'], reverse=True)[:limit]
+        # Ordenar por puntos totales
+        return sorted(all_players, key=lambda x: x['total_points'], reverse=True)[:limit]
     
     def get_all_time_top_scorers(self, limit: int = 20) -> List[Dict]:
         """
-        Top anotadores históricos (promedio más alto en una temporada).
+        Top anotadores históricos (suma total de puntos en todas las temporadas).
         
         Args:
             limit: Número de resultados
             
         Returns:
-            Lista de mejores temporadas individuales
+            Lista de jugadores ordenados por puntos totales acumulados en todos los años
         """
-        all_performances = []
+        player_stats = defaultdict(lambda: {
+            'total_points': 0.0,
+            'seasons': 0,
+            'teams': set(),
+            'position': '',
+            'proTeam': ''
+        })
         
         for year, data in self.historical_data.items():
             for team in data.get('teams', []):
                 for player in team.get('roster', []):
-                    all_performances.append({
-                        'name': player['name'],
-                        'year': year,
-                        'team': team['team_name'],
-                        'owner': team.get('owner', 'Unknown'),
-                        'avg_points': player.get('avg_points', 0),
-                        'total_points': player.get('total_points', 0),
-                        'position': player.get('position', ''),
-                        'proTeam': player.get('proTeam', '')
-                    })
+                    name = player['name']
+                    player_stats[name]['total_points'] += player.get('total_points', 0)
+                    player_stats[name]['seasons'] += 1
+                    player_stats[name]['teams'].add(team['team_name'])
+                    if player.get('position'):
+                        player_stats[name]['position'] = player['position']
+                    if player.get('proTeam'):
+                        player_stats[name]['proTeam'] = player['proTeam']
         
-        return sorted(all_performances, key=lambda x: x['avg_points'], reverse=True)[:limit]
+        result = []
+        for name, stats in player_stats.items():
+            seasons = stats['seasons']
+            total = round(stats['total_points'], 2)
+            result.append({
+                'name': name,
+                'total_points': total,
+                'avg_points': round(total / seasons, 2) if seasons > 0 else 0,
+                'seasons': seasons,
+                'team': ', '.join(sorted(stats['teams'])),
+                'position': stats['position'],
+                'proTeam': stats['proTeam']
+            })
+        
+        return sorted(result, key=lambda x: x['total_points'], reverse=True)[:limit]
     
     def get_team_performance_history(self, owner: str) -> Dict:
         """
