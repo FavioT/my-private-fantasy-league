@@ -326,7 +326,54 @@ class HistoricalAnalytics:
             'win_percentage': round(total_wins / total_games, 3) if total_games > 0 else 0,
             'history': history
         }
-    
+
+    def get_owner_top_players(self, owner: str, limit: int = 15) -> List[Dict]:
+        """
+        Top jugadores históricos de un dueño específico.
+
+        Args:
+            owner: Nombre del dueño
+            limit: Número de resultados
+
+        Returns:
+            Lista de jugadores ordenados por puntos totales acumulados mientras fueron del owner
+        """
+        player_stats = defaultdict(lambda: {
+            'total_points': 0.0,
+            'seasons_owned': 0,
+            'best_avg': 0.0,
+            'position': '',
+            'proTeam': ''
+        })
+
+        for year, data in self.historical_data.items():
+            for team in data.get('teams', []):
+                if team.get('owner', '').lower() == owner.lower():
+                    for player in team.get('roster', []):
+                        name = player['name']
+                        player_stats[name]['total_points'] += player.get('total_points', 0)
+                        player_stats[name]['seasons_owned'] += 1
+                        avg = player.get('avg_points', 0)
+                        if avg > player_stats[name]['best_avg']:
+                            player_stats[name]['best_avg'] = avg
+                        if player.get('position'):
+                            player_stats[name]['position'] = player['position']
+                        if player.get('proTeam'):
+                            player_stats[name]['proTeam'] = player['proTeam']
+
+        result = []
+        for name, stats in player_stats.items():
+            result.append({
+                'name': name,
+                'total_points': round(stats['total_points'], 2),
+                'best_avg': round(stats['best_avg'], 2),
+                'seasons_owned': stats['seasons_owned'],
+                'position': stats['position'],
+                'proTeam': stats['proTeam']
+            })
+
+        return sorted(result, key=lambda x: x['total_points'], reverse=True)[:limit]
+
     def get_season_summary(self, year: int) -> Optional[Dict]:
         """
         Resumen completo de una temporada.

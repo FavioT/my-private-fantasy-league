@@ -135,6 +135,8 @@
     .stat-card.green { border-color: #92cc41; box-shadow: 4px 4px 0 #92cc41; }
     .stat-card.red   { border-color: #e76e55; box-shadow: 4px 4px 0 #e76e55; }
     .stat-card.blue  { border-color: #209cee; box-shadow: 4px 4px 0 #209cee; }
+    .stat-card.clickable { cursor: pointer; transition: transform 0.15s; }
+    .stat-card.clickable:hover { transform: translateY(-3px); }
 
     /* Main panels */
     .panels-container {
@@ -205,7 +207,13 @@
       </a>
       <ul class="navbar-menu">
         <li class="navbar-item">
-          <button type="button" class="nes-btn is-warning" onclick="window.location.href='/'">Dashboard</button>
+          <a href="/" class="navbar-link active">Dashboard</a>
+        </li>
+        <li class="navbar-item">
+          <a href="/history.html" class="navbar-link">Historial</a>
+        </li>
+        <li class="navbar-item">
+          <a href="/teams.html" class="navbar-link">Equipos</a>
         </li>
       </ul>
     </div>
@@ -227,22 +235,22 @@
 
     <!-- Summary Cards -->
     <div class="cards-row">
-      <div class="stat-card gold">
+      <div class="stat-card gold clickable" id="card-seasons-wrap" onclick="location.href='/history.html'" title="Ver historial">
         <span class="stat-card-icon"><i class="nes-icon coin"></i></span>
         <span class="stat-card-value" id="card-seasons">—</span>
         <span class="stat-card-label">TEMPORADAS<br>REGISTRADAS</span>
       </div>
-      <div class="stat-card green">
+      <div class="stat-card green" id="card-champion-wrap">
         <span class="stat-card-icon"><i class="nes-icon trophy"></i></span>
         <span class="stat-card-value" id="card-champion" style="font-size:0.75rem;">—</span>
         <span class="stat-card-label" id="card-champion-label">ÚLTIMO CAMPEÓN</span>
       </div>
-      <div class="stat-card blue">
+      <div class="stat-card blue" id="card-scorer-wrap">
         <span class="stat-card-icon"><i class="nes-icon star"></i></span>
         <span class="stat-card-value" id="card-top-scorer" style="font-size:0.75rem;">—</span>
         <span class="stat-card-label" id="card-top-scorer-label">TOP SCORER</span>
       </div>
-      <div class="stat-card red">
+      <div class="stat-card red" id="card-teams-wrap">
         <span class="stat-card-icon"><i class="nes-icon like"></i></span>
         <span class="stat-card-value" id="card-teams">—</span>
         <span class="stat-card-label" id="card-teams-label">MÁS VICTORIAS</span>

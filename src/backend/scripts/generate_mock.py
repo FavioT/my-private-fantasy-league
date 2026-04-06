@@ -6,14 +6,20 @@ Esto actualizará el archivo mock_data.py con datos reales actuales
 """
 
 from espn_api.basketball import League
+from dotenv import load_dotenv
 import json
+import os
+
+# Cargar variables de entorno desde .env en la raíz del proyecto
+_root = os.path.join(os.path.dirname(__file__), '..', '..', '..')
+load_dotenv(os.path.join(_root, '.env'))
 
 def get_league():
     return League(
-        league_id=76117164,
-        year=2026,
-        espn_s2='AEBmFeUmTSryp0cGx8qZ7bQ5kpucH7tgYxY9k7V776NBbap9vCQaxqUij%2BS2McI7VbhxKxpu%2F%2FNRioOjV%2FCsAG9VVZLS3plbxcWCoUG2ea9rRn%2Bewg7D1Arpte8kYsvYpTGBKyLwaETILDeBHtVr%2FgiTERCurvzPH9JGXBnYkn3bdvAPxptcEAr1Sb1UKikOEhDvUCnG6kKnpf1yepo%2FzSyE80%2BuApbvkNrjgIyjpfHv1AX2Ip%2Bj%2F1WN24m4RFlPx8cBThF3%2BCIhQgPc%2FbhhVEPT6NEgb5q67I6N2qPby48u5Q%3D%3D', 
-        swid='{DA611254-3C72-4FA0-8A47-D236659F6792}'
+        league_id=int(os.environ['LEAGUE_ID']),
+        year=int(os.getenv('LEAGUE_YEAR', '2026')),
+        espn_s2=os.environ['ESPN_S2'],
+        swid=os.environ['SWID']
     )
 
 def generate_mock_data():

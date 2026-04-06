@@ -29,6 +29,15 @@ function showError(sectionId, msg) {
   if (loading) loading.innerHTML = `<span class="nes-text is-error">✖ ${msg}</span>`;
 }
 
+function setCardLink(cardId, url) {
+  const card = document.getElementById(cardId);
+  if (!card) return;
+  card.classList.add('clickable');
+  card.style.cursor = 'pointer';
+  card.onclick = () => { location.href = url; };
+  card.title = url.includes('owner-detail') ? 'Ver owner' : url.includes('player-detail') ? 'Ver jugador' : 'Ver equipos';
+}
+
 function rankMedal(i) {
   if (i === 0) return `<span style="background:#f7d51d;padding:2px 5px;border:2px solid #000;font-size:0.45rem;">1</span>`;
   if (i === 1) return `<span style="background:#c0c0c0;padding:2px 5px;border:2px solid #000;font-size:0.45rem;">2</span>`;
@@ -87,6 +96,7 @@ async function loadAllYearsChampions() {
       const last = data[data.length - 1];
       document.getElementById("card-champion").textContent = last.team_name;
       document.getElementById("card-champion-label").textContent = `CAMPEÓN ${last.year}`;
+      if (last.owner) setCardLink('card-champion-wrap', `/owner-detail.html?owner=${encodeURIComponent(last.owner)}`);
     }
 
     const tbody = document.getElementById("champions-body");
@@ -126,6 +136,7 @@ async function loadAllYearsTopScorers() {
       document.getElementById("card-top-scorer").textContent = data[0].name;
       document.getElementById("card-top-scorer-label").textContent =
         `TOP SCORER (${data[0].total_points.toFixed(1)} pts tot.)`;
+      setCardLink('card-scorer-wrap', `/player-detail.html?player=${encodeURIComponent(data[0].name)}`);
     }
 
     const tbody = document.getElementById("scorers-body");
@@ -164,6 +175,7 @@ async function loadAllYearsOwnerStats() {
     cardTeams.textContent = topWinner.owner;
     cardTeams.style.fontSize = "0.65rem";
     document.getElementById("card-teams-label").textContent = `MÁS VICTORIAS (${topWinner.total_wins} W)`;
+    setCardLink('card-teams-wrap', `/owner-detail.html?owner=${encodeURIComponent(topWinner.owner)}`);
 
     const tbody = document.getElementById("owners-body");
     tbody.innerHTML = "";
@@ -216,6 +228,8 @@ async function loadSeasonStandings(year) {
     document.getElementById("card-champion-label").textContent = `CAMPEÓN ${year}`;
     document.getElementById("card-teams").textContent = String(summary.total_teams);
     document.getElementById("card-teams-label").textContent = "EQUIPOS";
+    if (summary.champion?.owner) setCardLink('card-champion-wrap', `/owner-detail.html?owner=${encodeURIComponent(summary.champion.owner)}`);
+    setCardLink('card-teams-wrap', '/teams.html');
 
     const teams = [...(seasonData.teams || [])].sort((a, b) => b.wins - a.wins);
     const champion = summary.champion?.team || "";
@@ -258,6 +272,7 @@ async function loadSeasonTopScorers(year) {
       document.getElementById("card-top-scorer").textContent = data[0].name;
       document.getElementById("card-top-scorer-label").textContent =
         `TOP SCORER ${year} (${data[0].total_points.toFixed(1)} pts tot.)`;
+      setCardLink('card-scorer-wrap', `/player-detail.html?player=${encodeURIComponent(data[0].name)}`);
     }
 
     const tbody = document.getElementById("scorers-body");

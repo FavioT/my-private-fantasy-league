@@ -56,6 +56,14 @@ def index():
 def player_detail_page():
     return send_from_directory(FRONTEND_DIR, 'player-detail.html')
 
+@app.route('/teams.html')
+def teams_page():
+    return send_from_directory(FRONTEND_DIR, 'teams.html')
+
+@app.route('/owner-detail.html')
+def owner_detail_page():
+    return send_from_directory(FRONTEND_DIR, 'owner-detail.html')
+
 @app.route('/<path:filename>')
 def serve_static(filename):
     return send_from_directory(FRONTEND_DIR, filename)
@@ -334,6 +342,17 @@ def get_season_data(year):
         return jsonify(data)
     except FileNotFoundError:
         return jsonify({"error": f"Season {year} not found"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/analytics/owner/<owner_name>/top-players")
+def get_owner_top_players(owner_name):
+    """Top jugadores históricos de un owner específico"""
+    try:
+        limit = request.args.get('limit', default=15, type=int)
+        players = analytics.get_owner_top_players(owner_name, limit=limit)
+        return jsonify(players)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 

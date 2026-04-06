@@ -6,6 +6,11 @@ Ejecutar desde la raíz del proyecto:
 
 import sys
 import os
+from dotenv import load_dotenv
+
+# Cargar variables de entorno desde .env en la raíz del proyecto
+_root = os.path.join(os.path.dirname(__file__), '..', '..', '..')
+load_dotenv(os.path.join(_root, '.env'))
 
 # Agregar el directorio backend al path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
@@ -13,9 +18,9 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from data_manager import LeagueDataManager
 
 LEAGUE_CONFIG = {
-    'league_id': 76117164,
-    'espn_s2': 'AEBmFeUmTSryp0cGx8qZ7bQ5kpucH7tgYxY9k7V776NBbap9vCQaxqUij%2BS2McI7VbhxKxpu%2F%2FNRioOjV%2FCsAG9VVZLS3plbxcWCoUG2ea9rRn%2Bewg7D1Arpte8kYsvYpTGBKyLwaETILDeBHtVr%2FgiTERCurvzPH9JGXBnYkn3bdvAPxptcEAr1Sb1UKikOEhDvUCnG6kKnpf1yepo%2FzSyE80%2BuApbvkNrjgIyjpfHv1AX2Ip%2Bj%2F1WN24m4RFlPx8cBThF3%2BCIhQgPc%2FbhhVEPT6NEgb5q67I6N2qPby48u5Q%3D%3D',
-    'swid': '{DA611254-3C72-4FA0-8A47-D236659F6792}'
+    'league_id': int(os.environ['LEAGUE_ID']),
+    'espn_s2': os.environ['ESPN_S2'],
+    'swid': os.environ['SWID']
 }
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), '..', '..', '..', 'data')

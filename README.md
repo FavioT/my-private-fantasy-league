@@ -76,7 +76,7 @@ Todas las configuraciones se manejan mediante variables de entorno en el archivo
 
 ```bash
 # ID de tu liga de ESPN Fantasy Basketball
-LEAGUE_ID=76117164
+LEAGUE_ID=your_league_id_here
 
 # Año de la temporada
 LEAGUE_YEAR=2026
