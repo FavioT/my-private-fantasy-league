@@ -53,8 +53,8 @@ class LeagueDataManager:
     def get_season_data(self, year: int) -> Dict:
         """
         Obtiene datos de una temporada específica.
-        - Años históricos (<current_year): Lee desde JSON
-        - Año actual: Obtiene de espn_api en tiempo real
+        - Si existe el JSON guardado: Lee desde JSON
+        - Si no existe: Obtiene de espn_api en tiempo real
         
         Args:
             year: Año de la temporada
@@ -62,7 +62,8 @@ class LeagueDataManager:
         Returns:
             Dict con datos de la temporada
         """
-        if year < self.current_year:
+        file_path = os.path.join(self.data_dir, f"season_{year}.json")
+        if os.path.exists(file_path):
             return self._load_from_json(year)
         else:
             return self._fetch_from_espn(year)
@@ -203,10 +204,9 @@ class LeagueDataManager:
         all_data = {}
         
         for year in self.get_available_years():
-            if year < self.current_year:
-                try:
-                    all_data[year] = self._load_from_json(year)
-                except FileNotFoundError:
-                    continue
+            try:
+                all_data[year] = self._load_from_json(year)
+            except FileNotFoundError:
+                continue
         
         return all_data
