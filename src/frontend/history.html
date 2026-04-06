@@ -364,6 +364,30 @@
         padding: 0.5rem;
       }
     }
+
+    /* ── Responsive data list (reemplaza tablas) ─────────────────── */
+    .data-list { display: flex; flex-direction: column; gap: 0.3rem; }
+    .data-row {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0.5rem 0.6rem; border: 2px solid #000; background: white;
+      transition: background 0.15s;
+    }
+    .data-row:hover { background: #fffde0; }
+    .dr-rank  { min-width: 30px; text-align: center; flex-shrink: 0; font-size: 0.42rem; }
+    .dr-main  { flex: 1 1 100px; min-width: 0; }
+    .dr-name  { font-size: 0.52rem; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .dr-sub   { font-size: 0.38rem; color: #888; margin-top: 1px; }
+    .dr-stats { display: flex; gap: 0.6rem; align-items: center; flex-shrink: 0; }
+    .dr-stat  { display: flex; flex-direction: column; align-items: center; min-width: 32px; }
+    .dr-stat-val { font-size: 0.52rem; font-weight: bold; }
+    .dr-stat-lbl { font-size: 0.32rem; color: #888; }
+    .wins-bar-bg  { width: 50px; height: 6px; background: #eee; border: 1px solid #000; flex-shrink: 0; }
+    .wins-bar-fill { height: 100%; background: #92cc41; }
+    @media (max-width: 600px) {
+      .dr-stats { gap: 0.35rem; }
+      .dr-name  { font-size: 0.45rem; }
+      .wins-bar-bg { width: 36px; }
+    }
   </style>
 </head>
 <body>

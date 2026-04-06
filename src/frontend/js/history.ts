@@ -208,40 +208,32 @@ async function loadOwnerStats(): Promise<void> {
       return;
     }
     
-    let html = `
-      <table class="owner-table">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Dueño</th>
-            <th><i class="nes-icon trophy is-small"></i></th>
-            <th>Temporadas</th>
-            <th>Victorias</th>
-            <th>Derrotas</th>
-            <th>Win %</th>
-            <th>Pts/Temp</th>
-          </tr>
-        </thead>
-        <tbody>
-    `;
+    let html = '<div class="data-list">';
     
     owners.forEach((owner, index) => {
-      const rankClass = index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : '';
+      const rankNum = index === 0 ? `<span style="background:#f7d51d;padding:2px 4px;border:2px solid #000;font-size:0.4rem;">1</span>`
+                    : index === 1 ? `<span style="background:#c0c0c0;padding:2px 4px;border:2px solid #000;font-size:0.4rem;">2</span>`
+                    : index === 2 ? `<span style="background:#cd7f32;padding:2px 4px;border:2px solid #000;font-size:0.4rem;">3</span>`
+                    : `${index + 1}`;
+      const champs = owner.championships > 0
+        ? `${'<i class="nes-icon trophy is-small"></i>'.repeat(owner.championships)}`
+        : "";
       html += `
-        <tr>
-          <td><span class="rank-badge ${rankClass}">${index + 1}</span></td>
-          <td><strong>${owner.owner}</strong></td>
-          <td class="trophy-icon">${owner.championships > 0 ? '<i class="nes-icon trophy is-small"></i>'.repeat(owner.championships) : '-'}</td>
-          <td>${owner.seasons_played}</td>
-          <td style="color: #92cc41; font-weight: bold;">${owner.total_wins}</td>
-          <td style="color: #e76e55;">${owner.total_losses}</td>
-          <td><strong>${(owner.win_percentage * 100).toFixed(1)}%</strong></td>
-          <td>${owner.avg_points_per_season.toFixed(1)}</td>
-        </tr>
+        <div class="data-row">
+          <span class="dr-rank">${rankNum}</span>
+          <div class="dr-main">
+            <div class="dr-name">${owner.owner}${champs ? ` <span class="nes-text is-warning" style="font-size:0.38rem;">${champs}</span>` : ""}</div>
+            <div class="dr-sub">${owner.seasons_played} temp. · ${(owner.win_percentage * 100).toFixed(1)}% · ${owner.avg_points_per_season.toFixed(1)} pts/temp</div>
+          </div>
+          <div class="dr-stats">
+            <span class="dr-stat"><span class="dr-stat-val" style="color:#92cc41;">${owner.total_wins}</span><span class="dr-stat-lbl">W</span></span>
+            <span class="dr-stat"><span class="dr-stat-val" style="color:#e76e55;">${owner.total_losses}</span><span class="dr-stat-lbl">L</span></span>
+          </div>
+        </div>
       `;
     });
     
-    html += '</tbody></table>';
+    html += '</div>';
     container.innerHTML = html;
   } catch (error) {
     console.error('Error al cargar stats de dueños:', error);
@@ -265,41 +257,30 @@ async function loadTopPlayers(): Promise<void> {
       return;
     }
     
-    let html = `
-      <p style="font-size: 0.5rem; margin-bottom: 1rem;">🎮 Top 30 Mejores Temporadas Individuales</p>
-      <table class="player-table">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Jugador</th>
-            <th>Año</th>
-            <th>Equipo Fantasy</th>
-            <th>Pos</th>
-            <th>Equipo NBA</th>
-            <th>Pts/Juego</th>
-            <th>Total Pts</th>
-          </tr>
-        </thead>
-        <tbody>
-    `;
+    let html = '<p style="font-size: 0.5rem; margin-bottom: 0.8rem;">🎮 Top 30 Mejores Temporadas Individuales</p>';
+    html += '<div class="data-list">';
     
     players.forEach((player, index) => {
-      const rankClass = index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : '';
+      const rankNum = index === 0 ? `<span style="background:#f7d51d;padding:2px 4px;border:2px solid #000;font-size:0.4rem;">1</span>`
+                    : index === 1 ? `<span style="background:#c0c0c0;padding:2px 4px;border:2px solid #000;font-size:0.4rem;">2</span>`
+                    : index === 2 ? `<span style="background:#cd7f32;padding:2px 4px;border:2px solid #000;font-size:0.4rem;">3</span>`
+                    : `${index + 1}`;
       html += `
-        <tr>
-          <td><span class="rank-badge ${rankClass}">${index + 1}</span></td>
-          <td><strong>${player.name}</strong></td>
-          <td>${player.year}</td>
-          <td style="font-size: 0.4rem;">${player.team}</td>
-          <td>${player.position}</td>
-          <td><strong>${player.proTeam}</strong></td>
-          <td style="color: #92cc41; font-weight: bold;">${player.avg_points.toFixed(1)}</td>
-          <td>${player.total_points.toFixed(0)}</td>
-        </tr>
+        <div class="data-row">
+          <span class="dr-rank">${rankNum}</span>
+          <div class="dr-main">
+            <div class="dr-name">${player.name}</div>
+            <div class="dr-sub">${player.proTeam || ""} · ${player.position || ""} · ${player.team || ""}</div>
+          </div>
+          <div class="dr-stats">
+            <span class="dr-stat"><span class="dr-stat-val" style="color:#92cc41;">${player.avg_points.toFixed(1)}</span><span class="dr-stat-lbl">AVG</span></span>
+            <span class="dr-stat"><span class="dr-stat-val">${player.total_points.toFixed(0)}</span><span class="dr-stat-lbl">TOT</span></span>
+          </div>
+        </div>
       `;
     });
     
-    html += '</tbody></table>';
+    html += '</div>';
     container.innerHTML = html;
   } catch (error) {
     console.error('Error al cargar top players:', error);
@@ -430,36 +411,34 @@ async function loadSeasonSummary(year: number): Promise<void> {
     if (topScorers && topScorers.length > 0) {
       html += `
         <div class="nes-container is-rounded" style="margin-top: 2rem;">
-          <p style="font-size: 0.5rem; margin-bottom: 1rem;">🎯 Top 10 Jugadores ${year}</p>
-          <table class="player-table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Jugador</th>
-                <th>Equipo</th>
-                <th>Pos</th>
-                <th>Pts/Juego</th>
-                <th>Total</th>
-              </tr>
-            </thead>
-            <tbody>
+          <p style="font-size: 0.5rem; margin-bottom: 0.8rem;">🎯 Top 10 Jugadores ${year}</p>
+          <div class="data-list">
       `;
       
       topScorers.forEach((player, index) => {
-        const rankClass = index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : '';
+        const rankNum = index === 0 ? `<span style="background:#f7d51d;padding:2px 4px;border:2px solid #000;font-size:0.4rem;">1</span>`
+                      : index === 1 ? `<span style="background:#c0c0c0;padding:2px 4px;border:2px solid #000;font-size:0.4rem;">2</span>`
+                      : index === 2 ? `<span style="background:#cd7f32;padding:2px 4px;border:2px solid #000;font-size:0.4rem;">3</span>`
+                      : `${index + 1}`;
         html += `
-          <tr>
-            <td><span class="rank-badge ${rankClass}">${index + 1}</span></td>
-            <td><strong>${player.name}</strong></td>
-            <td style="font-size: 0.4rem;">${player.team}</td>
-            <td>${player.position}</td>
-            <td style="color: #92cc41; font-weight: bold;">${player.avg_points.toFixed(1)}</td>
-            <td>${player.total_points.toFixed(0)}</td>
-          </tr>
+          <div class="data-row">
+            <span class="dr-rank">${rankNum}</span>
+            <div class="dr-main">
+              <div class="dr-name">${player.name}</div>
+              <div class="dr-sub">${player.position || ""} · ${player.team || ""}</div>
+            </div>
+            <div class="dr-stats">
+              <span class="dr-stat"><span class="dr-stat-val" style="color:#92cc41;">${player.avg_points.toFixed(1)}</span><span class="dr-stat-lbl">AVG</span></span>
+              <span class="dr-stat"><span class="dr-stat-val">${player.total_points.toFixed(0)}</span><span class="dr-stat-lbl">TOT</span></span>
+            </div>
+          </div>
         `;
       });
       
-      html += '</tbody></table></div>';
+      html += `
+          </div>
+        </div>
+      `;
     }
     
     container.innerHTML = html;

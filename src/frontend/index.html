@@ -169,6 +169,30 @@
       h1 { font-size: 0.75rem; }
       .stat-card-value { font-size: 0.85rem; }
     }
+
+    /* ── Responsive data list (reemplaza tablas) ─────────────────── */
+    .data-list { display: flex; flex-direction: column; gap: 0.3rem; }
+    .data-row {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0.5rem 0.6rem; border: 2px solid #000; background: white;
+      transition: background 0.15s;
+    }
+    .data-row:hover { background: #fffde0; }
+    .dr-rank  { min-width: 30px; text-align: center; flex-shrink: 0; font-size: 0.42rem; }
+    .dr-main  { flex: 1 1 100px; min-width: 0; }
+    .dr-name  { font-size: 0.52rem; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .dr-sub   { font-size: 0.38rem; color: #888; margin-top: 1px; }
+    .dr-stats { display: flex; gap: 0.6rem; align-items: center; flex-shrink: 0; }
+    .dr-stat  { display: flex; flex-direction: column; align-items: center; min-width: 32px; }
+    .dr-stat-val { font-size: 0.52rem; font-weight: bold; }
+    .dr-stat-lbl { font-size: 0.32rem; color: #888; }
+    .wins-bar-bg  { width: 50px; height: 6px; background: #eee; border: 1px solid #000; flex-shrink: 0; }
+    .wins-bar-fill { height: 100%; background: #92cc41; }
+    @media (max-width: 600px) {
+      .dr-stats { gap: 0.35rem; }
+      .dr-name  { font-size: 0.45rem; }
+      .wins-bar-bg { width: 36px; }
+    }
   </style>
 </head>
 <body>
@@ -234,20 +258,7 @@
           <span class="nes-text is-warning">Cargando...</span>
         </div>
         <div id="champions-content" style="display:none;">
-          <div class="nes-table-responsive">
-            <table class="nes-table is-bordered">
-              <thead>
-                <tr>
-                  <th class="center-text">AÑO</th>
-                  <th>EQUIPO</th>
-                  <th>DUEÑO</th>
-                  <th class="center-text">W</th>
-                  <th class="center-text">L</th>
-                </tr>
-              </thead>
-              <tbody id="champions-body"></tbody>
-            </table>
-          </div>
+          <div class="data-list" id="champions-body"></div>
         </div>
       </div>
 
@@ -257,19 +268,7 @@
           <span class="nes-text is-warning">Cargando...</span>
         </div>
         <div id="scorers-content" style="display:none;">
-          <div class="nes-table-responsive">
-            <table class="nes-table is-bordered">
-              <thead>
-                <tr>
-                  <th class="center-text">#</th>
-                  <th>JUGADOR</th>
-                  <th class="center-text">TOTAL PTS</th>
-                  <th class="center-text" id="scorers-year-col">EQUIPO/AÑO</th>
-                </tr>
-              </thead>
-              <tbody id="scorers-body"></tbody>
-            </table>
-          </div>
+          <div class="data-list" id="scorers-body"></div>
         </div>
       </div>
 
@@ -282,22 +281,7 @@
         <span class="nes-text is-warning">Cargando...</span>
       </div>
       <div id="owners-content" style="display:none;">
-        <div class="nes-table-responsive">
-          <table class="nes-table is-bordered">
-            <thead>
-              <tr>
-                <th class="center-text">#</th>
-                <th>DUEÑO</th>
-                <th class="center-text"><i class="nes-icon trophy is-small"></i></th>
-                <th class="center-text">W</th>
-                <th class="center-text">L</th>
-                <th class="center-text">%</th>
-                <th class="center-text">TEMPORADAS</th>
-              </tr>
-            </thead>
-            <tbody id="owners-body"></tbody>
-          </table>
-        </div>
+        <div class="data-list" id="owners-body"></div>
       </div>
     </div>
 

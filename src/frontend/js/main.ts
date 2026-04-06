@@ -122,8 +122,6 @@ async function loadAllYearsTopScorers() {
   showLoading("scorers");
   const title = document.getElementById("scorers-title")!;
   title.textContent = "Top Scorers";
-  const col = document.getElementById("scorers-year-col")!;
-  col.textContent = "TEMP.";
 
   try {
     const res = await fetch(`${API}/api/analytics/top-scorers?limit=12`);
@@ -139,14 +137,19 @@ async function loadAllYearsTopScorers() {
     const tbody = document.getElementById("scorers-body")!;
     tbody.innerHTML = "";
     data.forEach((player, i) => {
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td class="center-text">${rankMedal(i)}</td>
-        <td>${player.name}<br><span style="font-size:0.38rem;color:#888;">${player.proTeam || ""}</span></td>
-        <td class="center-text nes-text is-primary">${player.total_points.toFixed(1)}</td>
-        <td class="center-text" style="font-size:0.42rem;">${player.seasons ?? ""}</td>
+      const row = document.createElement("div");
+      row.className = "data-row";
+      row.innerHTML = `
+        <span class="dr-rank">${rankMedal(i)}</span>
+        <div class="dr-main">
+          <div class="dr-name">${player.name}</div>
+          <div class="dr-sub">${player.proTeam || ""}${player.seasons ? ` · ${player.seasons} temp.` : ""}</div>
+        </div>
+        <div class="dr-stats">
+          <span class="dr-stat"><span class="dr-stat-val nes-text is-primary">${player.total_points.toFixed(1)}</span><span class="dr-stat-lbl">PTS</span></span>
+        </div>
       `;
-      tbody.appendChild(tr);
+      tbody.appendChild(row);
     });
 
     showContent("scorers");
@@ -177,25 +180,24 @@ async function loadAllYearsOwnerStats() {
       const pct = (owner.win_percentage * 100).toFixed(1);
       const fillW = Math.round((owner.total_wins / maxWins) * 100);
       const champs = owner.championships > 0
-        ? `<span class="nes-text is-warning">${'<i class="nes-icon trophy is-small"></i>'.repeat(owner.championships)}</span>`
-        : "—";
+        ? `${'<i class="nes-icon trophy is-small"></i>'.repeat(owner.championships)}`
+        : "";
 
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td class="center-text">${rankMedal(i)}</td>
-        <td>${owner.owner}</td>
-        <td class="center-text">${champs}</td>
-        <td class="center-text nes-text is-success">${owner.total_wins}</td>
-        <td class="center-text nes-text is-error">${owner.total_losses}</td>
-        <td class="center-text">${pct}%</td>
-        <td class="center-text">${owner.seasons_played}</td>
-        <td>
-          <div class="wins-bar-bg">
-            <div class="wins-bar-fill" style="width:${fillW}%"></div>
-          </div>
-        </td>
+      const row = document.createElement("div");
+      row.className = "data-row";
+      row.innerHTML = `
+        <span class="dr-rank">${rankMedal(i)}</span>
+        <div class="dr-main">
+          <div class="dr-name">${owner.owner}${champs ? ` <span class="nes-text is-warning" style="font-size:0.38rem;">${champs}</span>` : ""}</div>
+          <div class="dr-sub">${owner.seasons_played} temp. · ${pct}%</div>
+        </div>
+        <div class="dr-stats">
+          <span class="dr-stat"><span class="dr-stat-val nes-text is-success">${owner.total_wins}</span><span class="dr-stat-lbl">W</span></span>
+          <span class="dr-stat"><span class="dr-stat-val nes-text is-error">${owner.total_losses}</span><span class="dr-stat-lbl">L</span></span>
+          <div class="wins-bar-bg"><div class="wins-bar-fill" style="width:${fillW}%"></div></div>
+        </div>
       `;
-      tbody.appendChild(tr);
+      tbody.appendChild(row);
     });
 
     showContent("owners");
@@ -235,30 +237,22 @@ async function loadSeasonStandings(year: number) {
     const tbody = document.getElementById("champions-body")!;
     tbody.innerHTML = "";
     teams.forEach((team, i) => {
-      const pct = ((team.wins / (team.wins + team.losses)) * 100).toFixed(1);
       const isChamp = team.team_name === champion;
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td class="center-text">${isChamp ? '<i class="nes-icon trophy is-small"></i>' : rankMedal(i)}</td>
-        <td>${team.team_name}${isChamp ? ' <span style="font-size:0.38rem;background:#f7d51d;padding:1px 4px;border:2px solid #000;">CAMPEÓN</span>' : ""}</td>
-        <td>${team.owner || "—"}</td>
-        <td class="center-text nes-text is-success">${team.wins}</td>
-        <td class="center-text nes-text is-error">${team.losses}</td>
+      const row = document.createElement("div");
+      row.className = "data-row";
+      row.innerHTML = `
+        <span class="dr-rank">${isChamp ? '<i class="nes-icon trophy is-small"></i>' : rankMedal(i)}</span>
+        <div class="dr-main">
+          <div class="dr-name">${team.team_name}${isChamp ? ' <span style="font-size:0.36rem;background:#f7d51d;padding:1px 4px;border:2px solid #000;">CAMPEÓN</span>' : ""}</div>
+          <div class="dr-sub">${team.owner || "—"}</div>
+        </div>
+        <div class="dr-stats">
+          <span class="dr-stat"><span class="dr-stat-val nes-text is-success">${team.wins}</span><span class="dr-stat-lbl">W</span></span>
+          <span class="dr-stat"><span class="dr-stat-val nes-text is-error">${team.losses}</span><span class="dr-stat-lbl">L</span></span>
+        </div>
       `;
-      tbody.appendChild(tr);
+      tbody.appendChild(row);
     });
-
-    // Ajustar cabecera de tabla para que diga "equipo"
-    const header = document.querySelector("#champions-content thead tr");
-    if (header) {
-      header.innerHTML = `
-        <th class="center-text">#</th>
-        <th>EQUIPO</th>
-        <th>DUEÑO</th>
-        <th class="center-text">W</th>
-        <th class="center-text">L</th>
-      `;
-    }
 
     showContent("champions");
   } catch (e) {
@@ -270,8 +264,6 @@ async function loadSeasonTopScorers(year: number) {
   showLoading("scorers");
   const title = document.getElementById("scorers-title")!;
   title.textContent = `Top Scorers ${year}`;
-  const col = document.getElementById("scorers-year-col")!;
-  col.textContent = "EQUIPO";
 
   try {
     const res = await fetch(`${API}/api/analytics/season/${year}/top-scorers?limit=12`);
@@ -286,14 +278,19 @@ async function loadSeasonTopScorers(year: number) {
     const tbody = document.getElementById("scorers-body")!;
     tbody.innerHTML = "";
     data.forEach((player, i) => {
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td class="center-text">${rankMedal(i)}</td>
-        <td>${player.name}<br><span style="font-size:0.38rem;color:#888;">${player.proTeam || ""}</span></td>
-        <td class="center-text nes-text is-primary">${player.total_points.toFixed(1)}</td>
-        <td class="center-text" style="font-size:0.42rem;">${player.team || "—"}</td>
+      const row = document.createElement("div");
+      row.className = "data-row";
+      row.innerHTML = `
+        <span class="dr-rank">${rankMedal(i)}</span>
+        <div class="dr-main">
+          <div class="dr-name">${player.name}</div>
+          <div class="dr-sub">${player.proTeam || ""}${player.team ? ` · ${player.team}` : ""}</div>
+        </div>
+        <div class="dr-stats">
+          <span class="dr-stat"><span class="dr-stat-val nes-text is-primary">${player.total_points.toFixed(1)}</span><span class="dr-stat-lbl">PTS</span></span>
+        </div>
       `;
-      tbody.appendChild(tr);
+      tbody.appendChild(row);
     });
 
     showContent("scorers");
@@ -310,29 +307,25 @@ async function loadSeasonOwnerStats(year: number) {
     const data: SeasonData = await res.json();
 
     const teams = [...(data.teams || [])].sort((a, b) => b.wins - a.wins);
-    const maxWins = Math.max(...teams.map(t => t.wins), 1);
 
     const tbody = document.getElementById("owners-body")!;
     tbody.innerHTML = "";
     teams.forEach((team, i) => {
       const pct = ((team.wins / (team.wins + team.losses)) * 100).toFixed(1);
-      const fillW = Math.round((team.wins / maxWins) * 100);
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td class="center-text">${rankMedal(i)}</td>
-        <td>${team.owner || "—"}</td>
-        <td class="center-text">—</td>
-        <td class="center-text nes-text is-success">${team.wins}</td>
-        <td class="center-text nes-text is-error">${team.losses}</td>
-        <td class="center-text">${pct}%</td>
-        <td class="center-text">1</td>
-        <td>
-          <div class="wins-bar-bg">
-            <div class="wins-bar-fill" style="width:${fillW}%"></div>
-          </div>
-        </td>
+      const row = document.createElement("div");
+      row.className = "data-row";
+      row.innerHTML = `
+        <span class="dr-rank">${rankMedal(i)}</span>
+        <div class="dr-main">
+          <div class="dr-name">${team.owner || "—"}</div>
+          <div class="dr-sub">${team.team_name || ""} · ${pct}%</div>
+        </div>
+        <div class="dr-stats">
+          <span class="dr-stat"><span class="dr-stat-val nes-text is-success">${team.wins}</span><span class="dr-stat-lbl">W</span></span>
+          <span class="dr-stat"><span class="dr-stat-val nes-text is-error">${team.losses}</span><span class="dr-stat-lbl">L</span></span>
+        </div>
       `;
-      tbody.appendChild(tr);
+      tbody.appendChild(row);
     });
 
     showContent("owners");
