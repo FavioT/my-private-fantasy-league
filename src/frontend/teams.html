@@ -169,7 +169,18 @@
     .rank-bronze { background: #cd7f32; color: #fff; padding: 2px 5px; border: 2px solid #000; font-size: 0.4rem; }
 
     /* Responsive */
-    @media (max-width: 600px) {
+    @media (min-width: 769px) {
+      .tabs { display: none; }
+      .tab-panels {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        align-items: start;
+      }
+      .tab-panels .tab-content { display: block !important; }
+    }
+    @media (max-width: 768px) {
+      .tab-panels { display: contents; }
       .navbar-content { flex-direction: row; align-items: center; justify-content: space-between; }
       .navbar-menu { gap: 0.5rem; }
       .navbar-link { font-size: 0.45rem; padding: 0.4rem 0.6rem; }
@@ -223,25 +234,30 @@
         </button>
       </div>
 
-      <!-- Owners Tab -->
-      <div id="tab-owners" class="tab-content active">
-        <div class="nes-container is-rounded with-title">
-          <p class="title"><i class="nes-icon star is-small"></i> Historial de Owners</p>
-          <div id="owners-list" class="loading">
-            <span class="nes-text is-warning">Cargando owners...</span>
-          </div>
-        </div>
-      </div>
+      <!-- Tab panels (side-by-side on desktop, stacked on mobile) -->
+      <div class="tab-panels">
 
-      <!-- Season 2026 Tab -->
-      <div id="tab-season" class="tab-content">
-        <div class="nes-container is-rounded with-title">
-          <p class="title"><i class="nes-icon trophy is-small"></i> Standings 2026</p>
-          <div id="season-list" class="loading">
-            <span class="nes-text is-warning">Cargando temporada...</span>
+        <!-- Owners Tab -->
+        <div id="tab-owners" class="tab-content active">
+          <div class="nes-container is-rounded with-title">
+            <p class="title"><i class="nes-icon star is-small"></i> Historial de Owners</p>
+            <div id="owners-list" class="loading">
+              <span class="nes-text is-warning">Cargando owners...</span>
+            </div>
           </div>
         </div>
-      </div>
+
+        <!-- Season 2026 Tab -->
+        <div id="tab-season" class="tab-content">
+          <div class="nes-container is-rounded with-title">
+            <p class="title"><i class="nes-icon trophy is-small"></i> Standings 2026</p>
+            <div id="season-list" class="loading">
+              <span class="nes-text is-warning">Cargando temporada...</span>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /tab-panels -->
     </div>
   </div>
 

@@ -138,14 +138,18 @@
     .stat-card.clickable { cursor: pointer; transition: transform 0.15s; }
     .stat-card.clickable:hover { transform: translateY(-3px); }
 
-    /* Main panels */
-    .panels-container {
+    /* Main panels — two-column grid */
+    .main-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 1.5rem;
-      margin-bottom: 1.5rem;
+      align-items: start;
     }
-    .panel-full { margin-bottom: 1.5rem; }
+    .grid-col {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
 
     table { width: 100%; border-collapse: separate; border-spacing: 0; }
     thead { background-color: #209cee; color: white; }
@@ -162,7 +166,7 @@
     /* Wins bar */
     @media (max-width: 900px) {
       .cards-row { grid-template-columns: repeat(2, 1fr); }
-      .panels-container { grid-template-columns: 1fr; }
+      .main-grid { grid-template-columns: 1fr; }
       .navbar-content { flex-direction: row; align-items: center; justify-content: space-between; }
       .navbar-menu { flex-direction: row; align-items: center; gap: 0.5rem; }
       .navbar-link, .dropdown-toggle { font-size: 0.5rem; padding: 0.4rem 0.6rem; }
@@ -257,41 +261,50 @@
       </div>
     </div>
 
-    <!-- Champions + Top Scorers -->
-    <div class="panels-container">
+    <!-- Two-column main grid -->
+    <div class="main-grid">
 
-      <div class="nes-container with-title">
-        <p class="title"><span id="champions-title">Campeones</span></p>
-        <div id="champions-loading" class="loading-text">
-          <span class="nes-text is-warning">Cargando...</span>
-        </div>
-        <div id="champions-content" style="display:none;">
-          <div class="data-list" id="champions-body"></div>
-        </div>
-      </div>
+      <!-- Left column: Champions + Owner Stats -->
+      <div class="grid-col">
 
-      <div class="nes-container with-title">
-        <p class="title"><span id="scorers-title">Top Scorers</span></p>
-        <div id="scorers-loading" class="loading-text">
-          <span class="nes-text is-warning">Cargando...</span>
+        <div class="nes-container with-title">
+          <p class="title"><span id="champions-title">Campeones</span></p>
+          <div id="champions-loading" class="loading-text">
+            <span class="nes-text is-warning">Cargando...</span>
+          </div>
+          <div id="champions-content" style="display:none;">
+            <div class="data-list" id="champions-body"></div>
+          </div>
         </div>
-        <div id="scorers-content" style="display:none;">
-          <div class="data-list" id="scorers-body"></div>
+
+        <div class="nes-container with-title">
+          <p class="title">Estadísticas Owners</p>
+          <div id="owners-loading" class="loading-text">
+            <span class="nes-text is-warning">Cargando...</span>
+          </div>
+          <div id="owners-content" style="display:none;">
+            <div class="data-list" id="owners-body"></div>
+          </div>
         </div>
-      </div>
 
-    </div>
+      </div><!-- /grid-col left -->
 
-    <!-- Owner Stats -->
-    <div class="panel-full nes-container with-title">
-      <p class="title">Estadísticas Owners</p>
-      <div id="owners-loading" class="loading-text">
-        <span class="nes-text is-warning">Cargando...</span>
-      </div>
-      <div id="owners-content" style="display:none;">
-        <div class="data-list" id="owners-body"></div>
-      </div>
-    </div>
+      <!-- Right column: Top Scorers -->
+      <div class="grid-col">
+
+        <div class="nes-container with-title">
+          <p class="title"><span id="scorers-title">Top Scorers</span></p>
+          <div id="scorers-loading" class="loading-text">
+            <span class="nes-text is-warning">Cargando...</span>
+          </div>
+          <div id="scorers-content" style="display:none;">
+            <div class="data-list" id="scorers-body"></div>
+          </div>
+        </div>
+
+      </div><!-- /grid-col right -->
+
+    </div><!-- /main-grid -->
 
   </div>
 
