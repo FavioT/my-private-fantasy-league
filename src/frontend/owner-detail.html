@@ -197,10 +197,20 @@
       display: inline-block;
     }
 
+    /* Two-column sections layout */
+    .two-col-sections {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      align-items: start;
+    }
+    .two-col-sections .section { margin-bottom: 0; }
+
     /* Responsive */
     @media (max-width: 700px) {
       .cards-row { grid-template-columns: repeat(2, 1fr); }
       .stat-card-value { font-size: 0.85rem; }
+      .two-col-sections { grid-template-columns: 1fr; }
     }
     @media (max-width: 600px) {
       .navbar-content { flex-direction: row; align-items: center; justify-content: space-between; }
@@ -284,21 +294,26 @@
         </div>
       </div>
 
-      <!-- Season History -->
-      <div class="section nes-container is-rounded with-title">
-        <p class="title"><i class="nes-icon star is-small"></i> Historial por Temporada</p>
-        <div id="season-history" class="loading-text">
-          <span class="nes-text is-warning">Cargando...</span>
-        </div>
-      </div>
+      <!-- Season History + Top Players: two-column on desktop -->
+      <div class="two-col-sections">
 
-      <!-- Top Players -->
-      <div class="section nes-container is-rounded with-title">
-        <p class="title"><i class="nes-icon coin is-small"></i> Top Jugadores</p>
-        <div id="top-players" class="loading-text">
-          <span class="nes-text is-warning">Cargando...</span>
+        <!-- Season History -->
+        <div class="section nes-container is-rounded with-title">
+          <p class="title"><i class="nes-icon star is-small"></i> Historial por Temporada</p>
+          <div id="season-history" class="loading-text">
+            <span class="nes-text is-warning">Cargando...</span>
+          </div>
         </div>
-      </div>
+
+        <!-- Top Players -->
+        <div class="section nes-container is-rounded with-title">
+          <p class="title"><i class="nes-icon coin is-small"></i> Top Jugadores</p>
+          <div id="top-players" class="loading-text">
+            <span class="nes-text is-warning">Cargando...</span>
+          </div>
+        </div>
+
+      </div><!-- /two-col-sections -->
 
     </div><!-- /owner-content -->
   </div>
