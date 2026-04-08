@@ -73,6 +73,7 @@
     }
     .dropdown-toggle:hover { background-color: #f7d51d; color: #212529; border-color: #000; }
     .dropdown-toggle::after { content: ' ▼'; font-size: 0.4rem; }
+    .dropdown-toggle.active { background-color: white; color: #209cee; border-color: #000; }
     .dropdown-menu {
       display: none;
       position: absolute;
@@ -85,6 +86,8 @@
       z-index: 1000;
       margin-top: 0.5rem;
       padding: 0.5rem 0;
+      max-height: 60vh;
+      overflow-y: auto;
     }
     .dropdown-menu.show { display: block; }
     .dropdown-item {
@@ -216,8 +219,13 @@
         <li class="navbar-item">
           <a href="/history.html" class="navbar-link">Historial</a>
         </li>
-        <li class="navbar-item">
-          <a href="/teams.html" class="navbar-link">Equipos</a>
+        <li class="navbar-item dropdown">
+          <button class="dropdown-toggle" onclick="toggleDropdown('teams-dropdown')">Equipos</button>
+          <div class="dropdown-menu" id="teams-dropdown">
+            <a class="dropdown-item" href="/teams.html">— Ver todos —</a>
+            <div class="dropdown-divider"></div>
+            <div id="teams-dropdown-list"><span style="padding:0.5rem 1rem;font-size:0.4rem;display:block;">Cargando...</span></div>
+          </div>
         </li>
       </ul>
     </div>
@@ -321,6 +329,19 @@
         document.querySelectorAll('.dropdown-menu').forEach(dd => dd.classList.remove('show'));
       }
     });
+    fetch('/api/analytics/all-teams')
+      .then(r => r.json())
+      .then(teams => {
+        const list = document.getElementById('teams-dropdown-list');
+        if (!list) return;
+        list.innerHTML = teams.map(t =>
+          `<a class="dropdown-item" href="/owner-detail.html?owner=${encodeURIComponent(t.owner)}">${t.team_name}</a>`
+        ).join('');
+      })
+      .catch(() => {
+        const list = document.getElementById('teams-dropdown-list');
+        if (list) list.innerHTML = '';
+      });
   </script>
   <script src="js/main.js?v=4"></script>
 </body>

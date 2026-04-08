@@ -346,6 +346,24 @@ def get_season_data(year):
         return jsonify({"error": str(e)}), 500
 
 
+@app.route("/api/analytics/all-teams")
+def get_all_teams():
+    """Retorna todos los equipos únicos que existieron en la liga"""
+    try:
+        all_data = data_manager.load_all_historical_data()
+        teams_seen = {}
+        for _year, season_data in sorted(all_data.items()):
+            for team in season_data.get('teams', []):
+                name = team.get('team_name', '').strip()
+                owner = team.get('owner', '').strip()
+                if name and name not in teams_seen:
+                    teams_seen[name] = owner
+        result = [{'team_name': k, 'owner': v} for k, v in sorted(teams_seen.items())]
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 @app.route("/api/analytics/owner/<owner_name>/top-players")
 def get_owner_top_players(owner_name):
     """Top jugadores históricos de un owner específico"""

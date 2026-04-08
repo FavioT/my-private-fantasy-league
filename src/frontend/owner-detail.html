@@ -62,7 +62,45 @@
     .navbar-link:hover { background-color: #f7d51d; color: #212529; border-color: #000; }
     .navbar-link.active { background-color: white; color: #209cee; border-color: #000; }
 
-    /* Layout */
+    .dropdown { position: relative; }
+    .dropdown-toggle {
+      cursor: pointer;
+      color: white;
+      font-size: 0.55rem;
+      padding: 0.5rem 0.8rem;
+      display: inline-block;
+      border: 2px solid transparent;
+      background: none;
+      font-family: 'Press Start 2P', cursive;
+    }
+    .dropdown-toggle:hover { background-color: #f7d51d; color: #212529; border-color: #000; }
+    .dropdown-toggle.active { background-color: white; color: #209cee; border-color: #000; }
+    .dropdown-toggle::after { content: ' ▼'; font-size: 0.4rem; }
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background-color: white;
+      border: 4px solid #000;
+      box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
+      min-width: 200px;
+      z-index: 1000;
+      margin-top: 0.5rem;
+      padding: 0.5rem 0;
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+    .dropdown-menu.show { display: block; }
+    .dropdown-item {
+      display: block;
+      padding: 0.6rem 1rem;
+      color: #212529;
+      text-decoration: none;
+      font-size: 0.5rem;
+    }
+    .dropdown-item:hover { background-color: #92cc41; color: white; }
+    .dropdown-divider { height: 2px; background-color: #000; margin: 0.5rem 0; }
     .container-main {
       max-width: 1400px;
       margin: 0 auto;
@@ -239,8 +277,13 @@
         <li class="navbar-item">
           <a href="/history.html" class="navbar-link">Historial</a>
         </li>
-        <li class="navbar-item">
-          <a href="/teams.html" class="navbar-link active">Equipos</a>
+        <li class="navbar-item dropdown">
+          <button class="dropdown-toggle active" onclick="toggleDropdown('teams-dropdown')">Equipos</button>
+          <div class="dropdown-menu" id="teams-dropdown">
+            <a class="dropdown-item" href="/teams.html">— Ver todos —</a>
+            <div class="dropdown-divider"></div>
+            <div id="teams-dropdown-list"><span style="padding:0.5rem 1rem;font-size:0.4rem;display:block;">Cargando...</span></div>
+          </div>
         </li>
       </ul>
     </div>
@@ -318,6 +361,33 @@
     </div><!-- /owner-content -->
   </div>
 
+  <script>
+    function toggleDropdown(id) {
+      const dropdown = document.getElementById(id);
+      document.querySelectorAll('.dropdown-menu').forEach(dd => {
+        if (dd.id !== id) dd.classList.remove('show');
+      });
+      dropdown.classList.toggle('show');
+    }
+    document.addEventListener('click', function(event) {
+      if (!event.target.matches('.dropdown-toggle')) {
+        document.querySelectorAll('.dropdown-menu').forEach(dd => dd.classList.remove('show'));
+      }
+    });
+    fetch('/api/analytics/all-teams')
+      .then(r => r.json())
+      .then(teams => {
+        const list = document.getElementById('teams-dropdown-list');
+        if (!list) return;
+        list.innerHTML = teams.map(t =>
+          `<a class="dropdown-item" href="/owner-detail.html?owner=${encodeURIComponent(t.owner)}">${t.team_name}</a>`
+        ).join('');
+      })
+      .catch(() => {
+        const list = document.getElementById('teams-dropdown-list');
+        if (list) list.innerHTML = '';
+      });
+  </script>
   <script src="js/owner-detail.js?v=1"></script>
 </body>
 </html>
