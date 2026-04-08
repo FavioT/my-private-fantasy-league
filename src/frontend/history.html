@@ -547,8 +547,9 @@
       .then(teams => {
         const list = document.getElementById('teams-dropdown-list');
         if (!list) return;
+        const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
         list.innerHTML = teams.map(t =>
-          `<a class="dropdown-item" href="/owner-detail.html?owner=${encodeURIComponent(t.owner)}">${t.team_name}</a>`
+          `<a class="dropdown-item" href="/owner-detail.html?owner=${encodeURIComponent(t.owner)}">${esc(t.team_name)}</a>`
         ).join('');
       })
       .catch(() => {

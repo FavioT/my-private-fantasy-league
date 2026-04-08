@@ -360,11 +360,8 @@ def get_all_teams():
                     teams_seen[name] = owner
         result = [{'team_name': k, 'owner': v} for k, v in sorted(teams_seen.items())]
         return jsonify(result)
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
-@app.route("/api/analytics/owner/<owner_name>/top-players")
+    except Exception:
+        return jsonify({"error": "Internal server error"}), 500
 def get_owner_top_players(owner_name):
     """Top jugadores históricos de un owner específico"""
     try:
