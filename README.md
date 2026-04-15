@@ -1,4 +1,4 @@
-<img src="src/frontend/favicon.ico" alt="My Private Fantasy League logo" width="96" height="96">
+<img src="src/frontend/assets/adam.png" alt="My Private Fantasy League logo" width="120">
 
 # My Private Fantasy League
 

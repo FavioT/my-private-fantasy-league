@@ -64,6 +64,10 @@ def teams_page():
 def owner_detail_page():
     return send_from_directory(FRONTEND_DIR, 'owner-detail.html')
 
+@app.route('/premios.html')
+def premios_page():
+    return send_from_directory(FRONTEND_DIR, 'premios.html')
+
 @app.route('/<path:filename>')
 def serve_static(filename):
     return send_from_directory(FRONTEND_DIR, filename)
@@ -330,6 +334,19 @@ def get_season_summary_endpoint(year):
         if summary is None:
             return jsonify({"error": "Season not found"}), 404
         return jsonify(summary)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/analytics/season/<int:year>/awards")
+def get_season_awards_endpoint(year):
+    """Premios fantasy de una temporada"""
+    try:
+        compare_year = request.args.get('compare_year', default=(year - 1), type=int)
+        awards = analytics.get_season_awards(year=year, compare_year=compare_year)
+        if awards is None:
+            return jsonify({"error": "Season not found"}), 404
+        return jsonify(awards)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
